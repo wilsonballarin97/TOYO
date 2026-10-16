@@ -77,9 +77,42 @@ vecchio service worker e svuota la sua cache.
 | Servizio | Per cosa | Condizioni |
 |---|---|---|
 | OpenStreetMap / Nominatim | ricerca luoghi, paese | max 1 richiesta/s, niente autocompletamento, attribuzione ODbL |
-| Open-Meteo | meteo e clima | gratis solo per uso non commerciale, CC BY 4.0 |
+| MET Norway | previsioni (fino a ~9 giorni) | gratis anche commerciale, CC BY 4.0, User-Agent obbligatorio |
+| NASA POWER | clima dell'anno scorso | gratis, dati pubblici |
+| Google Maps (link) | come arrivare fra due punti (mezzi, piedi, auto) | solo link, nessuna API né costo |
 | Frankfurter (BCE) | cambi | gratis, senza chiave |
 | Nager.Date | festività | gratis, senza chiave |
+
+Tutte le fonti permettono l'uso commerciale: TOYO può avere link di
+affiliazione o abbonamenti senza cambiare niente qui. (Open-Meteo, Transitous e
+GraphHopper sono stati scartati apposta: gratis solo per uso non commerciale.)
+
+## Affiliazioni
+
+I link di "Cerca e prenota" funzionano sempre. Per guadagnare una commissione
+basta dare a Cloudflare i codici partner, senza toccare il codice:
+Cloudflare → toyo-travel → Settings → Variables and Secrets → aggiungi
+`TOYO_PARTNER` (tipo testo, ambiente Production), poi rifai il deploy.
+
+Il valore è un JSON `{ "marca": "modello" }`. Il modello può essere:
+- un indirizzo con `{url}` dentro, dove TOYO mette il link originale
+  (così funzionano Awin, CJ, Travelpayouts…);
+- dei parametri da aggiungere al link, che iniziano con `&`.
+
+```json
+{
+  "booking": "https://www.awin1.com/cread.php?awinmid=MID_BOOKING&awinaffid=TUO_ID&ued={url}",
+  "getyourguide": "&partner_id=TUO_PARTNER_ID",
+  "viator": "&pid=P00XXXXX&mcid=42383&medium=link"
+}
+```
+
+Marche disponibili: `ryanair`, `skyscanner`, `booking`, `airbnb`,
+`hostelworld`, `getyourguide`, `viator`, `tiqets`, `trainline`, `omio`,
+`flixbus`, `trenitalia`, `rentalcars`, `discovercars`, `hertz`, `airalo`,
+`heymondo`. Una marca senza codice resta un link normale. Quando c'è almeno un
+codice, sotto i link compare la frase che dichiara l'affiliazione, e i link
+affiliati hanno `rel="sponsored"`. Un valore scritto male ferma la build.
 
 ## Supabase
 

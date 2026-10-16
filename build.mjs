@@ -52,6 +52,24 @@ function datiBuild() {
   return [data, sha, ramo && ramo !== 'main' ? ramo : ''].filter(Boolean).join(' · ');
 }
 
+/* TOYO_PARTNER: JSON { marca: modello } dove il modello è
+   - un indirizzo con {url} dentro (il link originale viene messo lì, codificato), oppure
+   - pezzi da aggiungere all'indirizzo, che iniziano con & (es. "&partner_id=ABC").
+   Un valore sbagliato ferma la build: meglio saperlo subito che avere link rotti. */
+function partner() {
+  const raw = (process.env.TOYO_PARTNER || '').trim();
+  if (!raw) return {};
+  let p;
+  try { p = JSON.parse(raw); } catch { throw new Error('TOYO_PARTNER non è un JSON valido'); }
+  const ok = {};
+  for (const [k, v] of Object.entries(p)) {
+    if (!/^[a-z0-9]+$/.test(k) || typeof v !== 'string' || !(/^https:\/\/[^\s"'<>]+$/.test(v) && v.includes('{url}') || /^&[^\s"'<>]+$/.test(v)))
+      throw new Error(`TOYO_PARTNER.${k}: serve "https://…{url}…" oppure "&param=valore"`);
+    ok[k] = v;
+  }
+  return ok;
+}
+
 /* I valori si scrivono dentro stringhe JS: niente apici o a capo che le rompano. */
 const sicura = v => String(v || '').replace(/[\\'"\n\r<>]/g, '');
 
@@ -73,7 +91,8 @@ async function build() {
   let js = unisci(join(SRC, 'js'), '.js')
     .replaceAll("'__SUPABASE_URL__'", `'${sicura(process.env.SUPABASE_URL)}'`)
     .replaceAll("'__SUPABASE_KEY__'", `'${sicura(process.env.SUPABASE_KEY)}'`)
-    .replaceAll("'__BUILD__'", `'${sicura(DEV ? 'dev' : datiBuild())}'`);
+    .replaceAll("'__BUILD__'", `'${sicura(DEV ? 'dev' : datiBuild())}'`)
+    .replace('{} /*@PARTNER*/', JSON.stringify(partner()));
   if (/sb_secret_[A-Za-z0-9_-]{8,}/.test(js)) {
     throw new Error('Trovata una chiave Supabase SECRET nel codice: non va mai nel browser.');
   }
