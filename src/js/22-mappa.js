@@ -236,3 +236,15 @@ function segnaLuogo(lat, lon, etichetta, pid){
       tmpLat.toFixed(4) + ', ' + tmpLon.toFixed(4) + '</span></span>' +
     '<button class="rt" type="button" data-act="togli-luogo" style="font-size:12px;font-weight:650;color:var(--red)">Togli</button></div>';
 }
+
+/* Come arrivare da un punto al successivo: apre Google Maps con partenza,
+   arrivo e mezzo già scelti (mezzi pubblici compresi, con orari veri).
+   È un link, non un'API: nessun costo e nessuna licenza da rispettare. */
+const gmTratta = (a, b, modo) => 'https://www.google.com/maps/dir/?api=1&origin=' + encodeURIComponent(coord(a)) +
+  '&destination=' + encodeURIComponent(coord(b)) + '&travelmode=' + modo +
+  (b.gpid ? '&destination_place_id=' + encodeURIComponent(b.gpid) : '');
+function tratta(a, b){
+  if(!(a && b && a.lat && b.lat)) return '';
+  return [['transit','mezzi'], ['walking','a piedi'], ['driving','auto']].map(m =>
+    '<a href="' + esc(gmTratta(a, b, m[0])) + '" target="_blank" rel="noopener">' + m[1] + '</a>').join(' · ');
+}

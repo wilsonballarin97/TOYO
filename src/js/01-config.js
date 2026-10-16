@@ -17,6 +17,11 @@ const TOYO_CONFIG = {
   url:    '__SUPABASE_URL__' || 'https://qelakwrbfujneufktfzr.supabase.co',
   chiave: '__SUPABASE_KEY__' || 'sb_publishable_hfHVCtPyizdZRX_s3oZr8Q_g6RtLytl'
 };
+/* Codici di affiliazione dei partner (Booking via Awin, GetYourGuide, Viator…).
+   Arrivano dalla variabile TOYO_PARTNER su Cloudflare, scritta dalla build:
+   finché è vuota i link funzionano uguale, solo senza commissione.
+   Formato e esempi nel README, sezione "Affiliazioni". */
+const TOYO_PARTNER = {} /*@PARTNER*/;
 /* Scritto dalla build: data e commit da cui è stata generata questa versione. */
 const TOYO_BUILD = '__BUILD__';
 /* ▲▲▲  fine configurazione  ▲▲▲ */

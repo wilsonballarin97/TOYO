@@ -306,7 +306,8 @@ function tabItinerario(t){
     g.lista.forEach((x, i) => {
       righe.push(rigaTappa(x));
       const sp = i < g.lista.length - 1 ? spostamento(x, g.lista[i+1]) : null;
-      if(sp) righe.push(`<div class="spost">${ico(sp.ico,13)}<span>${sp.tempo} ${sp.come} · ${sp.dist}</span></div>`);
+      if(sp) righe.push(`<div class="spost">${ico(sp.ico,13)}<span>${sp.tempo} ${sp.come} · ${sp.dist}</span>` +
+        `<span class="spost-l">${tratta(x, g.lista[i+1])}</span></div>`);
     });
     const ottimizzabile = posso(t) && g.data && g.lista.filter(x => x.lat && x.lon).length >= 3;
     return `
@@ -442,38 +443,51 @@ function linkPrenota(t){
   const dove = (t.dove || t.nome || '').trim();
   const q  = encodeURIComponent(dove);
   const dal = t.dal || '', al = t.al || t.dal || '';
+  const date = dal ? '&checkin=' + dal + '&checkout=' + (al || dal) : '';
   const voli = [
-    ['Ryanair',   'https://www.ryanair.com/it/it/cheap-flights?dateOut=' + encodeURIComponent(dal)],
-    ['Skyscanner','https://www.skyscanner.it/trasporti/voli/?destination=' + q + (dal ? '&oym=' + dal.slice(0,4) + dal.slice(5,7) : '')],
-    ['Google Voli','https://www.google.com/travel/flights?q=' + encodeURIComponent('Voli per ' + dove + (dal ? ' il ' + dal : ''))]
+    ['Ryanair',    'ryanair',    'https://www.ryanair.com/it/it/cheap-flights?dateOut=' + encodeURIComponent(dal)],
+    ['Skyscanner', 'skyscanner', 'https://www.skyscanner.it/trasporti/voli/?destination=' + q + (dal ? '&oym=' + dal.slice(0,4) + dal.slice(5,7) : '')],
+    ['Google Voli','google',     'https://www.google.com/travel/flights?q=' + encodeURIComponent('Voli per ' + dove + (dal ? ' il ' + dal : ''))]
   ];
   const hotel = [
-    ['Booking.com','https://www.booking.com/searchresults.it.html?ss=' + q +
-      (dal ? '&checkin=' + dal + '&checkout=' + (al || dal) : '')],
-    ['Airbnb', 'https://www.airbnb.it/s/' + q + '/homes' + (dal ? '?checkin=' + dal + '&checkout=' + (al || dal) : '')]
+    ['Booking.com','booking', 'https://www.booking.com/searchresults.it.html?ss=' + q + date],
+    ['Airbnb',     'airbnb',  'https://www.airbnb.it/s/' + q + '/homes' + (dal ? '?checkin=' + dal + '&checkout=' + (al || dal) : '')],
+    ['Hostelworld','hostelworld', 'https://www.hostelworld.com/it/'],
+  ];
+  const attivita = [
+    ['GetYourGuide','getyourguide','https://www.getyourguide.it/s/?q=' + q],
+    ['Viator',      'viator',      'https://www.viator.com/it-IT/searchResults/all?text=' + q],
+    ['Tiqets',      'tiqets',      'https://www.tiqets.com/it/search?q=' + q]
+  ];
+  const treni = [
+    ['Trainline', 'trainline',  'https://www.thetrainline.com/it'],
+    ['Omio',      'omio',       'https://www.omio.it/'],
+    ['FlixBus',   'flixbus',    'https://www.flixbus.it/'],
+    ['Trenitalia','trenitalia', 'https://www.trenitalia.com/']
   ];
   const auto = [
-    ['Hertz', 'https://www.hertz.it/rentacar/reservation/?pickupLocation=' + q +
-      (dal ? '&pickupDate=' + dal + '&returnDate=' + (al || dal) : '')],
-    ['Rentalcars','https://www.rentalcars.com/it/search?location=' + q]
+    ['Rentalcars',  'rentalcars',  'https://www.rentalcars.com/it/search?location=' + q],
+    ['DiscoverCars','discovercars','https://www.discovercars.com/it'],
+    ['Hertz',       'hertz',       'https://www.hertz.it/rentacar/reservation/?pickupLocation=' + q + (dal ? '&pickupDate=' + dal + '&returnDate=' + (al || dal) : '')]
   ];
-  const grp = (tit, ic, arr, primo) => `
-    <div class="prenota-g">
-      <div class="prenota-t">${ic}<span>${tit}</span></div>
-      <div class="prenota-l">${arr.map((v,i) =>
-        '<a class="btn ' + (i === 0 && primo ? 'btn-primary' : 'btn-ghost') + ' btn-sm" target="_blank" rel="noopener noreferrer" href="' +
-        v[1] + '">' + esc(v[0]) + ' ↗</a>').join('')}</div>
-    </div>`;
+  const extra = [
+    ['eSIM Airalo', 'airalo',   'https://www.airalo.com/it'],
+    ['Assicurazione Heymondo', 'heymondo', 'https://www.heymondo.it/']
+  ];
   return `
   <div class="card">
     <div class="card-h"><div><h3>Cerca e prenota</h3>
-      <div class="sub">${dove ? 'Apri il servizio con “' + esc(dove) + '”' + (dal ? ' e le tue date' : '') + ' già compilati'
+      <div class="sub">${dove ? 'Apri il servizio con “' + esc(dove) + '”' + (dal ? ' e le tue date' : '') + ' già compilati, dove si può'
         : 'Apri i servizi di ricerca'}</div></div></div>
     <div class="card-b prenota-b">
-      ${grp('Voli', '<svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round"><path d="M10.6 3.4a1.6 1.6 0 0 1 2.8 0l2 6.2 6.1 2a.9.9 0 0 1 0 1.7l-6.1 2-2 6.2a1.6 1.6 0 0 1-2.8 0l-2-6.2-6.1-2a.9.9 0 0 1 0-1.7l6.1-2z" opacity="0"/><path d="M21 15.5L13.6 12V5.6a1.6 1.6 0 0 0-3.2 0V12L3 15.5v2.2l7.4-2.2v3l-2.2 1.5v1.3l3.8-1 3.8 1v-1.3L13.6 20.5v-3L21 17.7z"/></svg>', voli, true)}
-      ${grp('Alloggio', '<svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19V7M3 11.5h18V19M3 15.5h18"/><path d="M21 19v-3.5"/><circle cx="7.5" cy="9.2" r="1.9"/><path d="M10.5 11.5V10a1.8 1.8 0 0 1 1.8-1.8h5.4A1.8 1.8 0 0 1 19.5 10v1.5"/></svg>', hotel, true)}
-      ${grp('Auto', '<svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16.5v-3l1.9-4.4A2 2 0 0 1 7.7 8h8.6a2 2 0 0 1 1.8 1.1L20 13.5v3"/><path d="M4 13.5h16M5.5 16.5v2.2M18.5 16.5v2.2"/><circle cx="8" cy="16.6" r="0" /><path d="M7 15.5h1.6M15.4 15.5H17"/></svg>', auto, true)}
+      ${gruppoPrenota('Voli', '<svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round"><path d="M10.6 3.4a1.6 1.6 0 0 1 2.8 0l2 6.2 6.1 2a.9.9 0 0 1 0 1.7l-6.1 2-2 6.2a1.6 1.6 0 0 1-2.8 0l-2-6.2-6.1-2a.9.9 0 0 1 0-1.7l6.1-2z" opacity="0"/><path d="M21 15.5L13.6 12V5.6a1.6 1.6 0 0 0-3.2 0V12L3 15.5v2.2l7.4-2.2v3l-2.2 1.5v1.3l3.8-1 3.8 1v-1.3L13.6 20.5v-3L21 17.7z"/></svg>', voli, true)}
+      ${gruppoPrenota('Alloggio', '<svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19V7M3 11.5h18V19M3 15.5h18"/><path d="M21 19v-3.5"/><circle cx="7.5" cy="9.2" r="1.9"/><path d="M10.5 11.5V10a1.8 1.8 0 0 1 1.8-1.8h5.4A1.8 1.8 0 0 1 19.5 10v1.5"/></svg>', hotel, true)}
+      ${gruppoPrenota('Cosa fare', ico('biglietto',16), attivita, true)}
+      ${gruppoPrenota('Treni e bus', ico('treno',16), treni, true)}
+      ${gruppoPrenota('Auto', '<svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16.5v-3l1.9-4.4A2 2 0 0 1 7.7 8h8.6a2 2 0 0 1 1.8 1.1L20 13.5v3"/><path d="M4 13.5h16M5.5 16.5v2.2M18.5 16.5v2.2"/><circle cx="8" cy="16.6" r="0" /><path d="M7 15.5h1.6M15.4 15.5H17"/></svg>', auto, true)}
+      ${gruppoPrenota('Prima di partire', ico('scudo',16), extra, false)}
     </div>
+    ${haPartner() ? '<div class="card-b" style="padding-top:0">' + NOTA_PARTNER + '</div>' : ''}
   </div>`;
 }
 

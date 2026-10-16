@@ -1,7 +1,7 @@
 /* ==========================================================================
    LA META · meteo, paese, cambio e festività nella panoramica del viaggio
    I dati arrivano da /api/info (Cloudflare), che mette insieme OpenStreetMap,
-   Open-Meteo, BCE e Nager.Date. La scheda si disegna vuota insieme al resto
+   MET Norway, NASA POWER, BCE e Nager.Date. La scheda si disegna vuota insieme al resto
    e si riempie appena arriva la risposta; le risposte restano in memoria per
    la sessione, così cambiare scheda e tornare non rifà le domande.
    ========================================================================== */
@@ -53,15 +53,15 @@ async function riempiMeta(t){
   }
 }
 
+/* Simboli di MET Norway (es. "partlycloudy_day", "lightrainshowers_night"):
+   conta la parola, non il momento della giornata. L'ordine conta: il primo
+   che corrisponde vince. */
 const METEO = [
-  [0,'☀️','Sereno'],[1,'🌤️','Quasi sereno'],[2,'⛅','Poco nuvoloso'],[3,'☁️','Coperto'],
-  [45,'🌫️','Nebbia'],[48,'🌫️','Nebbia'],[51,'🌦️','Pioviggine'],[53,'🌦️','Pioviggine'],[55,'🌦️','Pioviggine'],
-  [61,'🌧️','Pioggia debole'],[63,'🌧️','Pioggia'],[65,'🌧️','Pioggia forte'],[66,'🌧️','Pioggia gelata'],[67,'🌧️','Pioggia gelata'],
-  [71,'🌨️','Neve debole'],[73,'🌨️','Neve'],[75,'❄️','Neve forte'],[77,'🌨️','Nevischio'],
-  [80,'🌦️','Rovesci'],[81,'🌧️','Rovesci'],[82,'⛈️','Rovesci forti'],[85,'🌨️','Rovesci di neve'],[86,'❄️','Rovesci di neve'],
-  [95,'⛈️','Temporale'],[96,'⛈️','Temporale con grandine'],[99,'⛈️','Temporale con grandine']
+  [/thunder/,'⛈️','Temporale'],[/heavysnow/,'❄️','Neve forte'],[/snow/,'🌨️','Neve'],[/sleet/,'🌨️','Nevischio'],
+  [/heavyrain/,'🌧️','Pioggia forte'],[/rainshowers/,'🌦️','Rovesci'],[/lightrain/,'🌦️','Pioggia debole'],[/rain/,'🌧️','Pioggia'],
+  [/fog/,'🌫️','Nebbia'],[/partlycloudy/,'⛅','Poco nuvoloso'],[/cloudy/,'☁️','Coperto'],[/fair/,'🌤️','Quasi sereno'],[/clearsky/,'☀️','Sereno']
 ];
-const meteoDi = c => (METEO.find(x => x[0] === c) || [c,'🌡️','—']);
+const meteoDi = s => (METEO.find(x => x[0].test(s || '')) || [null,'🌡️','—']);
 const giornoCorto = iso => new Date(iso + 'T12:00:00').toLocaleDateString('it-IT', {weekday:'short', day:'numeric'});
 
 function htmlMeta(d, t){
@@ -69,17 +69,17 @@ function htmlMeta(d, t){
   const m = d.meteo;
   if(m && m.tipo === 'previsione' && m.giorni.length){
     parti.push('<div class="meta-sez"><div class="meta-tit">Previsioni</div><div class="meta-giorni">' +
-      m.giorni.slice(0, 8).map(g => { const w = meteoDi(g.codice);
+      m.giorni.slice(0, 8).map(g => { const w = meteoDi(g.simbolo);
         return '<div class="meta-g" title="' + esc(w[2]) + '"><span class="d">' + esc(giornoCorto(g.data)) + '</span>' +
           '<span class="e" aria-label="' + esc(w[2]) + '">' + w[1] + '</span>' +
           '<span class="t"><b>' + g.max + '°</b> ' + g.min + '°</span>' +
-          (g.pioggia >= 30 ? '<span class="p">' + g.pioggia + '%</span>' : '') + '</div>'; }).join('') +
+          (g.mm >= 1 ? '<span class="p">' + String(g.mm).replace('.', ',') + ' mm</span>' : '') + '</div>'; }).join('') +
       '</div>' + (m.giorni.length > 8 ? '<div class="meta-nota">Altri ' + (m.giorni.length - 8) + ' giorni nelle previsioni.</div>' : '') + '</div>');
   } else if(m && m.tipo === 'clima' && m.max != null){
     parti.push('<div class="meta-sez"><div class="meta-tit">Che tempo aspettarsi</div>' +
       '<div class="meta-clima"><b>' + m.max + '°</b> di giorno, <b>' + m.min + '°</b> di notte · ' +
       (m.giorniPioggia ? m.giorniPioggia + ' su ' + m.giorni + ' giorni di pioggia' : 'niente pioggia') + '</div>' +
-      '<div class="meta-nota">Com\'era negli stessi giorni del ' + m.anno + '. Le previsioni vere arrivano 15 giorni prima della partenza.</div></div>');
+      '<div class="meta-nota">Com\'era negli stessi giorni del ' + m.anno + '. Le previsioni vere arrivano una decina di giorni prima della partenza.</div></div>');
   }
   if(d.festivita && d.festivita.length){
     parti.push('<div class="meta-sez"><div class="meta-tit">Festività durante il viaggio</div>' +
@@ -102,5 +102,5 @@ function htmlMeta(d, t){
       '</div>');
   }
   if(!parti.length) return '<div class="meta-wait">Nessuna informazione utile per queste date.</div>';
-  return parti.join('') + '<div class="meta-fonti">Meteo Open-Meteo · cambi BCE · festività Nager.Date · © OpenStreetMap</div>';
+  return parti.join('') + '<div class="meta-fonti">Meteo MET Norway e NASA POWER · cambi BCE · festività Nager.Date · © OpenStreetMap</div>';
 }
