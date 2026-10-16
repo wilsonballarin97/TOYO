@@ -1,0 +1,32 @@
+# Intestazioni HTTP di Cloudflare Pages.
+# La Content-Security-Policy prima era un <meta> dentro index.html; da header
+# vale per tutte le risposte. Niente più 'unsafe-inline' sugli script: tutto
+# il codice sta in /assets/app.*.js. Da tenere allineata se si aggiunge un servizio.
+
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://maps.googleapis.com https://maps.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://cdn.jsdelivr.net https://maps.googleapis.com https://nominatim.openstreetmap.org; frame-src https://www.google.com https://maps.google.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(self), camera=(self), microphone=(), payment=(), usb=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
+
+# L'HTML e il service worker si ricontrollano sempre: è da qui che arrivano le versioni nuove.
+/
+  Cache-Control: no-cache
+/index.html
+  Cache-Control: no-cache
+/sw.js
+  Cache-Control: no-cache
+  Service-Worker-Allowed: /
+
+# File con l'impronta nel nome: non cambiano mai, cache per un anno.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/foto/*
+  Cache-Control: public, max-age=2592000
+
+/manifest.webmanifest
+  Content-Type: application/manifest+json
+  Cache-Control: public, max-age=3600
