@@ -132,6 +132,7 @@ function tabPanoramica(t, s){
     </div>
 
     <div class="col col-side">
+      ${cardMeta(t)}
       <div class="card">
         <div class="card-h"><div><h3>${org ? 'Come vanno i soldi' : 'La tua quota'}</h3></div></div>
         <div class="card-b">
