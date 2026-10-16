@@ -1,0 +1,75 @@
+/* ============ FAB ============ */
+.fab{position:fixed;right:18px;bottom:calc(74px + var(--safe-b));z-index:640;display:none;
+  width:54px;height:54px;border-radius:var(--r-chip);place-items:center;font-size:24px;color:#fff;
+  background:var(--terracotta);box-shadow:var(--e2)}
+
+/* ============ BACHECA ============
+   Una bacheca è fatta di poche forme ripetute centinaia di volte: se una
+   misura è sbagliata, l'errore si moltiplica. Perciò qui si usano solo i
+   numeri della scala (--s*, --r*, --e*) e nessun valore deciso a occhio. */
+.av.foto{background:var(--surface-2);overflow:hidden;padding:0}
+.av.foto img{width:100%;height:100%;object-fit:cover;display:block}
+.testa.foto{background:var(--surface-2);overflow:hidden;padding:0}
+.testa.foto img{width:100%;height:100%;object-fit:cover;display:block}
+.me.foto{background:var(--surface-2);overflow:hidden;padding:0;border:1px solid var(--line)}
+.me.foto img{width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit}
+
+.feed{display:flex;flex-direction:column;gap:var(--s3);max-width:620px;width:100%;margin:0 auto}
+.comp{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-card);
+  box-shadow:var(--e1);padding:var(--s3) var(--s4);display:flex;gap:var(--s3);align-items:center}
+.comp .finto{flex:1;min-width:0;text-align:left;font-size:13.5px;color:var(--ink-3);
+  padding:10px 14px;border-radius:var(--r-chip);background:var(--surface-2);border:1px solid var(--line)}
+.comp .finto:hover{border-color:var(--line-strong);background:var(--surface)}
+
+/* Il post: nessuna cornice attorno al testo, una riga sottile sotto. Le
+   bacheche che funzionano non incastonano ogni messaggio in una scheda —
+   la scheda separa, e qui le cose devono scorrere. */
+.post{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-card);
+  box-shadow:var(--e1);overflow:hidden}
+.post-h{display:flex;align-items:center;gap:var(--s2);padding:var(--s3) var(--s4) var(--s2)}
+.post-h .nm{font-size:13.5px;font-weight:700;letter-spacing:-.015em;line-height:1.25;display:block}
+.post-h .mt{font-size:11.5px;color:var(--ink-3);display:block}
+.post-h .rt{margin-left:auto;display:flex;align-items:center;gap:var(--s1)}
+.post-txt{padding:0 var(--s4) var(--s3);font-size:14px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.post-luogo{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--ink-3);
+  padding:0 var(--s4) var(--s3)}
+/* Le foto vanno a filo scheda meno il margine, e il loro raggio è quello
+   della scheda meno quel margine: 18 − 6 = 12. */
+.post-foto{display:grid;gap:3px;padding:0 6px 6px}
+.post-foto.n1{grid-template-columns:1fr}
+.post-foto.n2{grid-template-columns:1fr 1fr}
+.post-foto.n3{grid-template-columns:1fr 1fr}
+.post-foto.n3 > :first-child{grid-row:span 2}
+.post-foto.n4{grid-template-columns:1fr 1fr}
+.post-foto button{padding:0;border-radius:var(--r-img);overflow:hidden;background:var(--surface-2);
+  aspect-ratio:1/1;display:block;border:1px solid var(--line)}
+.post-foto.n1 button{aspect-ratio:4/3}
+.post-foto.n3 > :first-child{aspect-ratio:auto}
+.post-foto img{width:100%;height:100%;object-fit:cover;display:block}
+.post-f{display:flex;align-items:center;gap:var(--s1);padding:var(--s2) var(--s3) var(--s3);border-top:1px solid var(--line)}
+.reag{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:var(--r-chip);
+  font-size:12.5px;font-weight:650;color:var(--ink-3);transition:.14s}
+.reag:hover{background:var(--surface-2);color:var(--ink)}
+.reag.on{color:var(--terracotta)}
+.reag .n{font-variant-numeric:tabular-nums}
+
+.persona-riga{display:flex;align-items:center;gap:var(--s3);padding:11px var(--s2)}
+.persona-riga + .persona-riga{border-top:1px solid var(--line)}
+.persona-riga .tx{min-width:0;flex:1}
+.persona-riga .tx b{display:flex;align-items:baseline;gap:7px;font-size:13.5px;font-weight:700;letter-spacing:-.015em}
+.persona-riga .tx b i{font-style:normal;font-weight:500;font-size:11.5px;color:var(--ink-3);white-space:nowrap}
+.persona-riga .tx span{display:block;font-size:11.5px;color:var(--ink-3)}
+.persona-riga.commento{align-items:flex-start}
+.persona-riga.commento .detto{display:block;font-size:13.5px;color:var(--ink);
+  white-space:pre-wrap;word-break:break-word;margin-top:1px}
+/* Il cestino di un commento non e' un'azione da mettere in evidenza: si vede
+   quando serve e sta zitto il resto del tempo. */
+.via-commento{width:30px;height:30px;flex:0 0 30px;border-radius:var(--r-chip);display:grid;place-items:center;
+  color:var(--ink-3);opacity:.5;transition:.14s}
+.via-commento:hover{opacity:1;color:var(--red);background:var(--red-soft)}
+
+/* La striscia della bacheca: due schede a sinistra, la lente in fondo. */
+.bacheca-tabs{align-items:center}
+.bacheca-tabs .cerca{margin-left:auto;width:34px;height:34px;flex:0 0 34px;border-radius:var(--r-chip);
+  display:grid;place-items:center;color:var(--ink-3)}
+.bacheca-tabs .cerca:hover{background:var(--surface);color:var(--ink)}

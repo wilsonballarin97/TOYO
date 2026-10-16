@@ -1,0 +1,56 @@
+/* ============ REPORT SPESE ============ */
+.num,.v.num,.stat .v,.money{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.ico{display:block;flex:0 0 auto}
+
+/* ==========================================================================
+   REATTIVITÀ
+   Metà degli elementi cliccabili cambiava fondo di scatto e nessuno rispondeva
+   al tocco: su telefono, dove il lampo di sistema è spento
+   (-webkit-tap-highlight-color:transparent), toccare una riga non dava alcun
+   segno di essere stata toccata. Una regola sola, invece di ricordarsene ogni
+   volta che si scrive un componente nuovo.
+   Tutto quello che segue è già coperto da prefers-reduced-motion più sotto.
+   ========================================================================== */
+.icon-btn,.ibtn,.row,.doc,.docbtn,.chip,.pchip,.mi,.tabbar button,.tabs button,
+.emoji-grid button,.theme,.geo-res button,.modal-h .x,.ideax,.pw-occhio,.addcard,
+.pickdoc,.drop,.fab,.tcard{
+  transition:background .14s ease, border-color .14s ease, color .14s ease,
+             transform .12s ease, box-shadow .14s ease, opacity .14s ease}
+
+/* La risposta al tocco: appena percettibile, sotto i 150ms. Se si vede, è
+   troppa; se non c'è, l'app sembra rotta. */
+.row:active,.doc:active,.mi:active,.chip:active,.pchip:active,.pickdoc:active,
+.icon-btn:active,.ibtn:active,.docbtn:active,.tabbar button:active,
+.tabs button:active,.emoji-grid button:active,.theme:active,.addcard:active,
+.geo-res button:active{transform:scale(.975)}
+.fab:active{transform:scale(.93)}
+.tcard:active .top .scena{transform:scale(1.015)}
+.tcard .top .scena{transition:transform .2s ease}
+
+/* Il pulsante nudo non aveva né hover né pressione — e nell'eroe ce ne sono
+   cinque, che sono i più in vista dell'app. */
+.btn:hover{filter:brightness(1.04)}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.45;cursor:not-allowed;filter:none;transform:none}
+/* L'occhiello: era scritto in otto modi diversi — sei corpi, otto spaziature,
+   quattro pesi e due ori — sparsi in punti che non si vedono mai insieme. È
+   quello che rende un insieme "quasi giusto". */
+.kick,.menu-lbl,.hero .kick,.countdown .l,.tcard .top .dove,.ideahero-tx .kick,.onb-mid .kick{
+  font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700}
+.rep{display:flex;flex-direction:column;gap:14px}
+.repline .top{display:flex;align-items:baseline;gap:9px;font-size:12.5px;margin-bottom:6px}
+.repline .top .nm{font-weight:650}
+.repline .top .rt{margin-left:auto;font-weight:700;font-variant-numeric:tabular-nums}
+.repline .top .q{color:var(--ink-3);font-weight:500;font-size:11.5px}
+.rbar{height:10px;border-radius:var(--r-chip);background:var(--surface-2);border:1px solid var(--line);overflow:hidden;position:relative}
+.rbar .fill{position:absolute;inset:0 auto 0 0;display:flex;gap:2px;height:100%}
+.rbar .seg{height:100%}
+.rbar .seg.ok{background:var(--chart-ok);border-radius:var(--r-btn)}
+.rbar .seg.due{background:var(--chart-due);border-radius:var(--r-btn)}
+.rbar .seg.solo{border-radius:var(--r-btn)}
+.replegend{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--ink-2);margin-bottom:2px}
+.replegend span{display:inline-flex;align-items:center;gap:6px}
+.replegend i{width:10px;height:10px;border-radius:var(--r-chip);display:inline-block}
+.reptot{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding-bottom:4px}
+.reptot .big{font-size:26px;font-weight:700;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
+.reptot .m{font-size:12px;color:var(--ink-3)}

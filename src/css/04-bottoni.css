@@ -1,0 +1,25 @@
+/* ============ BOTTONI ============ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 16px;border-radius:var(--r-btn);
+  font-size:13.5px;font-weight:700;letter-spacing:-.005em;white-space:nowrap;
+  transition:transform .12s,box-shadow .12s,filter .12s,background .12s,border-color .12s}
+/* L'ombra del pulsante principale è del suo stesso colore, non grigia: è così
+   che sembra acceso invece che incollato sopra. Alla pressione scende di 1px
+   e l'ombra si accorcia — il gesto si sente. */
+.btn-primary{background:var(--terracotta);color:#fff;
+  box-shadow:none}
+.btn-primary:hover{background:#AB421F}
+.btn-primary:active{transform:translateY(1px);background:#8E3418}
+.btn-ghost:active,.btn-sage:active,.btn-danger:active{transform:translateY(1px)}
+.btn-primary:disabled{opacity:.45;cursor:not-allowed;filter:none}
+.btn-ghost{background:var(--surface);border:1px solid var(--line)}
+.btn-ghost:hover{background:var(--surface-2);border-color:var(--line-strong)}
+.btn-sage{background:var(--sage);color:#fff}
+.btn-sage:hover{filter:brightness(1.07)}
+.btn-danger{background:var(--red-soft);color:var(--red);border:1px solid #F0CFC9}
+.btn-danger:hover{background:#F4D8D3}
+.btn-sm{padding:8px 13px;font-size:12.5px;border-radius:var(--r-btn)}
+.btn-sage{box-shadow:none}
+.btn-full{width:100%}
+.ibtn{width:30px;height:30px;border-radius:var(--r-btn);display:grid;place-items:center;color:var(--ink-3);font-size:13px;flex:0 0 30px}
+.ibtn:hover{background:var(--surface-2);color:var(--ink)}
+.ibtn.del:hover{background:var(--red-soft);color:var(--red)}

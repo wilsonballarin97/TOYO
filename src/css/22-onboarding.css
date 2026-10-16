@@ -1,0 +1,25 @@
+/* ============ ONBOARDING ============ */
+.seg button{padding:9px 8px;border-radius:var(--r-chip);text-align:center;font-size:13.5px;font-weight:650;color:var(--ink-3);transition:.15s}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line-strong)}
+.onb{min-height:100vh;display:grid;grid-template-columns:1fr 1fr}
+.onb-art{position:relative;overflow:hidden;color:#fff;padding:38px 40px;display:flex;flex-direction:column;
+  background:var(--terracotta)}
+.onb-art::after{content:"";position:absolute;inset:0}
+.onb-art > *{position:relative;z-index:1}
+.onb-art .brand-mark{background:rgba(255,255,255,.94);color:var(--terracotta);box-shadow:none}
+.onb-art .brand-name,.onb-art .brand-name span{color:#fff}
+.onb-mid{margin:auto 0;max-width:440px}
+.onb-mid .kick{font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:650;opacity:.86;margin-bottom:12px}
+.onb-mid h1{font-size:35px;line-height:1.1;letter-spacing:-.035em;font-weight:700}
+.onb-mid p{margin:14px 0 0;font-size:15px;opacity:.92}
+.onb-pts{margin-top:26px;display:flex;flex-direction:column;gap:12px}
+.pt{display:flex;align-items:flex-start;gap:11px;font-size:13.5px}
+.pt .ic{width:30px;height:30px;flex:0 0 30px;border-radius:var(--r-btn);display:grid;place-items:center;font-size:14px;
+  background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28)}
+.pt b{font-weight:650;display:block;font-size:13.5px}
+.pt span{opacity:.86}
+.onb-main{display:flex;flex-direction:column;padding:26px 30px;overflow-y:auto}
+.onb-box{margin:auto;width:100%;max-width:400px;padding:18px 0}
+.onb-box h2{font-size:22px;letter-spacing:-.03em}
+.onb-box .lead{margin:6px 0 20px;font-size:13.5px;color:var(--ink-3)}
+.tiny{font-size:11.5px;color:var(--ink-3);line-height:1.5}

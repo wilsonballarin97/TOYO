@@ -1,0 +1,21 @@
+/* ============ IDEE DI VIAGGIO ============ */
+.ideagrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:15px}
+.ideacard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-card);
+  box-shadow:var(--shadow);overflow:hidden;transition:.16s;display:flex;flex-direction:column;text-align:left;width:100%}
+.ideacard:hover{transform:translateY(-2px);border-color:var(--line-strong);
+  box-shadow:var(--e2)}
+.ideaimg{position:relative;height:132px;overflow:hidden;background:var(--surface-2)}
+.ideasvg{display:block;width:100%;height:100%}
+.ideaflag{position:absolute;top:10px;left:11px;font-size:19px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.35))}
+.ideabd{padding:12px 14px 14px;display:flex;flex-direction:column;gap:7px;flex:1}
+.ideabd h3{font-size:14.5px;letter-spacing:-.02em}
+.ideabd .m{font-size:12px;color:var(--ink-3)}
+.ideabd .foot{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+.ideahero{position:relative;height:170px;overflow:hidden}
+.ideahero .ideasvg{width:100%;height:100%}
+.ideahero-tx{position:absolute;left:0;bottom:0;right:0;color:#fff;padding:12px 16px;background:rgba(18,12,8,.78)}
+.ideahero-tx .kick{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:650;opacity:.9}
+.ideahero-tx h2{font-size:22px;letter-spacing:-.03em;margin-top:2px}
+.ideax{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:var(--r-chip);display:grid;place-items:center;
+  background:rgba(255,252,248,.9);color:var(--ink);font-size:14px}
+.ideax:hover{background:#fff}

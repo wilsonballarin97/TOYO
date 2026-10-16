@@ -1,0 +1,286 @@
+/* ============ RESPONSIVE ============ */
+@media(max-width:1000px){
+  .split,.split-it{grid-template-columns:1fr}
+  .col-side{position:static}
+}
+@media(max-width:900px){
+  .onb{grid-template-columns:1fr}
+  .onb-art{display:none}
+  .onb-main{padding:22px 18px}
+}
+@media(max-width:760px){
+  .wrap{padding:16px 14px 96px}
+  .topbar{padding:10px 14px;gap:9px}
+  .sw-txt .d{display:none}
+  .tabbar{display:flex}
+  .fab{display:grid}
+  .mapwrap{height:260px}
+  .card-h{flex-wrap:wrap}
+  /* ⚠️ Prima OGNI pulsante nell'intestazione di una scheda diventava largo
+     quanto lo schermo. In una pagina con cinque schede si vedevano cinque
+     bottoni identici a tutta larghezza che dicevano «Apri»: sembravano
+     l'azione principale, e non lo erano. Ora si allarga solo quando ce n'e'
+     piu' di uno e la riga va comunque riempita. */
+  .card-h .rt{margin-left:auto;display:flex;gap:8px;justify-content:flex-end}
+  .card-h .rt .btn{justify-content:center}
+  /* Un pulsante solo resta accanto al titolo se ci sta; due o piu' prendono
+     una riga tutta loro e se la dividono. */
+  .card-h .rt:has(.btn + .btn){width:100%;margin-left:0;margin-top:9px}
+  .card-h .rt:has(.btn + .btn) .btn{flex:1}
+  .puntichips{padding:10px 12px}
+  /* ⚠️ Questa riga rimetteva un margine attorno all'apertura, e il pannello
+     scuro restava incorniciato dall'illustrazione su tutti i lati: sembrava
+     un quadro dentro un quadro. Il pannello deve arrivare ai bordi. */
+  .hero{padding:84px 0 0;border-radius:var(--r-card)}
+  .hero > .scena{height:84px}
+  .hero h1{font-size:21px}
+  .countdown{margin-left:0;margin-top:12px}
+  .hero-bar{gap:12px}
+  .hero-bar .btn{margin-left:0 !important;width:100%;justify-content:center;margin-top:2px}
+  .hero-top{flex-direction:column;align-items:flex-start}
+  .countdown{align-self:flex-start;padding:7px 14px}
+  .countdown .n{font-size:20px}
+  /* Stessa storia sopra le sezioni: «Modifica» e «Trova persone» non sono
+     l'azione principale della pagina e non devono averne l'aspetto. */
+  .sec-head .rt{margin-left:auto}
+  .sec-head .rt .btn{justify-content:center}
+  .grid{grid-template-columns:1fr}
+  .two,.three{grid-template-columns:1fr}
+  .modal{border-radius:var(--r-sheet)}
+  .modal-b{max-height:none}
+  .acts-row{opacity:1}
+  .brand-name{display:none}
+  /* ⚠️ E ogni riga mandava il proprio valore a capo, anche quando il valore
+     era «2». Due caratteri occupavano una riga intera e l'occhio doveva
+     scendere per leggerli. Vanno a capo solo le righe che hanno dei
+     PULSANTI, dove lo spazio serve davvero. */
+  .row{align-items:center;flex-wrap:wrap;padding:12px 8px}
+  .row .tx{flex:1 1 0;min-width:0}
+  .row .rt{margin-left:auto;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+  .row:has(.rt .btn) .rt,
+  .row:has(.rt .acts-row) .rt{flex:1 1 100%;margin-left:43px;margin-top:7px;justify-content:flex-start;text-align:left}
+  .row:has(.rt .btn),
+  .row:has(.rt .acts-row){align-items:flex-start}
+  .row .rt .acts-row{margin-left:auto}
+  .doc{align-items:flex-start;flex-wrap:wrap}
+  .doc .rt{flex:1 1 100%;margin-left:41px;margin-top:6px}
+  .doc .rt .acts-row{margin-left:auto}
+  .toast{bottom:calc(78px + var(--safe-b))}
+}
+@media(max-width:400px){
+  .switcher .sw-txt{max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+}
+
+/* ==========================================================================
+   RESTYLING 2026 — "Salvia e crema"
+   Un solo blocco in fondo, così la scala originale resta leggibile e il
+   nuovo aspetto si può togliere in un colpo. Cambiano i COLORI e il PESO
+   VISIVO: meno ombra, bordi più chiari, superfici più piatte. La struttura
+   (misure, spazi, raggi) resta quella pensata sopra.
+   ========================================================================== */
+:root{
+  --bg:#F5F0E8; --surface:#FFFDF9; --surface-2:#F0ECE2;
+  --line:#E6E0D4; --line-strong:#D7CFBF;
+  --ink:#22261F; --ink-2:#4E5449; --ink-3:#646B5E; --ink-4:#8A9082;
+
+  /* L'accento non è più il cotto: è una salvia scura, abbastanza profonda
+     da reggere il testo su bianco (4.7:1) e da non urlare in una lista. */
+  --terracotta:#55744C; --terracotta-soft:#E7EFE1;
+  --rust:var(--terracotta); --chart-due:var(--terracotta);
+
+  /* Il verde "positivo" resta distinto dall'accento: più freddo e più cupo,
+     così un saldo in attivo non si confonde con un pulsante. */
+  --sage:#2F6D4F; --sage-soft:#E1EFE7; --chart-ok:var(--sage);
+  --gold:#94770F; --gold-soft:#F4EFDA;
+  --blue:#2A6396; --blue-soft:#E4EDF6;
+  --red:#A63A2E; --red-soft:#F6E6E2;
+
+  /* Ombre quasi assenti: a separare le schede dal fondo ci pensa il
+     contrasto crema/bianco, non una sfocatura. */
+  --e1:0 1px 1px rgba(34,38,31,.03);
+  --e2:0 1px 2px rgba(34,38,31,.04), 0 6px 16px -10px rgba(34,38,31,.14);
+  --e3:0 2px 6px rgba(34,38,31,.05), 0 18px 40px -20px rgba(34,38,31,.22);
+  --shadow:var(--e1);
+
+  --r-btn:11px; --r-card:18px; --r-img:14px; --r-sheet:22px;
+}
+
+/* Superfici piatte: la scheda si legge per il bordo, non per l'ombra. */
+.card{box-shadow:none;border-color:var(--line)}
+.card:hover{box-shadow:var(--e1)}
+.tcard{box-shadow:none}
+.tcard:hover{box-shadow:var(--e2)}
+
+/* La barra in alto smette di essere un secondo piano: linea sottile e basta. */
+.topbar{background:rgba(255,253,249,.86);border-bottom-color:var(--line);padding:12px 22px}
+.icon-btn,.switcher{background:transparent}
+.icon-btn:hover,.switcher:hover{background:var(--surface-2)}
+
+/* Le due iniziali in alto a destra: nessun colore acceso, solo salvia. */
+.me{background:#41563B;font-weight:700}
+.me.org{background:#2F6D4F}
+
+/* Il segno del marchio: quadrato pieno solo lui, tutto il resto è calmo. */
+.brand-mark{background:var(--terracotta)}
+
+/* Pulsanti: il primario è pieno, il resto è quasi invisibile finché non lo
+   tocchi. Tre livelli di enfasi bastano, quattro fanno rumore. */
+.btn-primary{box-shadow:none}
+.btn-ghost{border-color:var(--line);background:transparent}
+.btn-ghost:hover{background:var(--surface-2);border-color:var(--line-strong)}
+
+/* Campi: il bordo si scurisce solo dove stai scrivendo. */
+.inp{background:var(--surface);border-color:var(--line)}
+.inp:focus{border-color:var(--terracotta);box-shadow:0 0 0 3px var(--terracotta-soft)}
+
+/* Il focus da tastiera segue l'accento nuovo. */
+:focus-visible{outline:2.5px solid var(--terracotta);outline-offset:2px}
+
+/* La barra in basso: nessuna ombra, una riga sola a separarla. */
+.tabbar{box-shadow:none;border-top:1px solid var(--line);background:rgba(255,253,249,.94)}
+
+/* Il pulsante grande in basso a destra resta l'unico elemento che sporge. */
+.fab{box-shadow:var(--e2)}
+
+/* ==========================================================================
+   ACCESSO 2026 — "Card centrata"
+   L'onboarding smette di essere uno split a tutta pagina: diventa una sola
+   scheda al centro, su fondo salvia. Testata verde con il marchio, striscia
+   con le tre funzioni, poi il modulo. Solo CSS: il markup e le funzioni
+   restano identici.
+   ========================================================================== */
+.onb{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:#DCE5D4;padding:32px 18px;gap:0}
+.onb.hide{display:none}
+
+/* Testata: marchio su verde profondo, angoli alti arrotondati. */
+.onb-art{width:100%;max-width:452px;padding:34px 30px 24px;background:#55744C;color:#fff;
+  border-radius:26px 26px 0 0;display:block;text-align:center}
+.onb-art .brand{justify-content:center;margin-bottom:0}
+.onb-art .brand-mark{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.3)}
+.onb-art .brand-name{font-size:26px;letter-spacing:-.04em}
+
+/* Il claim lungo lascia il posto a una riga sola. */
+.onb-mid{margin:0;max-width:none}
+.onb-mid h1,.onb-mid p{display:none}
+.onb-mid .kick{margin:14px 0 0;opacity:.78;font-size:10.5px;letter-spacing:.16em}
+
+/* Le tre funzioni: icona sopra, etichetta corta sotto, niente descrizioni. */
+.onb-pts{margin-top:22px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pt{flex-direction:column;align-items:center;gap:8px;text-align:center}
+.pt .ic{width:38px;height:38px;flex:0 0 38px;border-radius:12px;background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.22)}
+.pt b{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;opacity:.95}
+.pt span{display:none}
+.onb-art > .tiny{display:none}
+
+/* Corpo della scheda: crema, angoli bassi arrotondati, ombra morbida. */
+.onb-main{width:100%;max-width:452px;background:var(--surface);border-radius:0 0 26px 26px;
+  padding:26px 30px 30px;box-shadow:0 24px 60px -34px rgba(34,38,31,.45);overflow:visible}
+.onb-box{max-width:none;padding:0}
+.onb-box > .brand{display:none}
+.onb-box h2{font-size:20px}
+.onb-box .lead{margin:6px 0 18px}
+
+/* La scheda respira anche da telefono. */
+@media(max-width:900px){
+  .onb{padding:22px 14px}
+  .onb-art{display:block}
+  .onb-main{padding:24px 20px 26px}
+  .onb-art{padding:28px 20px 20px}
+}
+
+/* ==========================================================================
+   PULIZIA 2026 — tre colori, due raggi, due pesi
+   Ultimo blocco del foglio: vince su tutto quello che sta sopra, così i
+   sistemi paralleli accumulati (cinque colori semantici, cinque raggi, sei
+   pesi, tre ombre) collassano in uno solo senza riscrivere mille regole.
+   ========================================================================== */
+:root{
+  /* Tre superfici e basta: crema sotto, bianco sopra, un grigio-crema per i
+     campi spenti. Nient'altro. */
+  --bg:#F4F1E9; --surface:#FFFFFF; --surface-2:#F7F4EC;
+  --line:#E6E1D6; --line-strong:#D8D2C4;
+  --ink:#22261F; --ink-2:#5A6155; --ink-3:#7C8377; --ink-4:#98A091;
+
+  /* UN verde. Tutto ciò che è accento — pulsanti, voce attiva, selezione,
+     grafici, badge — usa questo e nessun'altra tinta. */
+  --accent:#4F7048; --accent-soft:#EBF1E6;
+  --terracotta:var(--accent);   --terracotta-soft:var(--accent-soft);
+  --sage:var(--accent);         --sage-soft:var(--accent-soft);
+  --gold:var(--accent);         --gold-soft:var(--accent-soft);
+  --blue:var(--accent);         --blue-soft:var(--accent-soft);
+  --rust:var(--accent);
+  --chart-ok:var(--accent); --chart-due:var(--accent);
+
+  /* Il rosso resta solo dove significa davvero "attenzione". */
+  --red:#A6402F; --red-soft:#F6E7E3;
+
+  /* Due raggi: uno per le superfici, uno per le cose che si toccano.
+     Le pillole restano pillole dove sono davvero pillole. */
+  --r-surface:16px; --r-control:10px; --r-pill:999px;
+  --r-card:var(--r-surface); --r-sheet:var(--r-surface); --r-img:var(--r-surface);
+  --r-btn:var(--r-control); --r-chip:var(--r-pill);
+  --radius:var(--r-control); --radius-lg:var(--r-surface);
+
+  /* Una scala di spazi sola. */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px;
+
+  /* Un'ombra sola, quasi impercettibile: a separare è il bianco sul crema. */
+  --e1:0 1px 2px rgba(34,38,31,.05), 0 6px 18px -12px rgba(34,38,31,.18);
+  --e2:var(--e1); --e3:var(--e1); --shadow:var(--e1);
+}
+
+/* --- Due pesi: normale e forte. Erano sei. --- */
+body, body *{font-weight:400 !important}
+h1,h2,h3,h4,b,strong,.btn,.brand-name,.kick,
+.tabs button.on,.tabbar button.on,.row .t,.tcard .nm,.card-h .t,
+.stat b,.big,.tot,.me,.chip.on,label,th,.t,.nm,.n,.sv b{font-weight:700 !important}
+
+/* --- Titoli più grandi, secondario più chiaro: le pagine respirano. --- */
+h1{font-size:27px;letter-spacing:-.03em;line-height:1.15}
+h2{font-size:19px;letter-spacing:-.02em}
+h3{font-size:15.5px;letter-spacing:-.01em}
+.lead,.tiny,.sub,.muted{color:var(--ink-3)}
+.tiny{font-size:12px;line-height:1.55}
+.kick{color:var(--ink-3);letter-spacing:.14em}
+.num,.tot,.stat b,.big{font-variant-numeric:tabular-nums}
+
+/* --- Icone lineari al posto delle emoji: allineamento uniforme. --- */
+.ico{vertical-align:-.16em}
+.ic .ico,.ibtn .ico,.tabbar .i .ico,.fab .ico,.btn .ico{vertical-align:0}
+.ic,.ibtn,.docbtn,.fab{display:inline-grid;place-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.chip{display:inline-flex;align-items:center;gap:6px}
+
+/* --- Superfici: bianco su crema, bordo sottile, nessuna ombra pesante. --- */
+.card,.tcard,.modal,.menu,.drop,.addcard,.empty-big{box-shadow:none;border-radius:var(--r-surface)}
+.card,.tcard{background:var(--surface);border:1px solid var(--line)}
+.btn,.inp,.chip,.ibtn,.icon-btn,.tabs,.tabs button{border-radius:var(--r-control)}
+.chip,.pchip,.tabs button{border-radius:var(--r-pill)}
+
+/* --- Stati vuoti curati al posto delle sezioni bianche. --- */
+.stato-vuoto{display:flex;flex-direction:column;align-items:center;text-align:center;gap:var(--s2);
+  padding:var(--s6) var(--s4);color:var(--ink-3)}
+.stato-vuoto .sv-ic{width:44px;height:44px;display:grid;place-items:center;border-radius:var(--r-pill);
+  background:var(--accent-soft);color:var(--accent)}
+.stato-vuoto b{font-size:14.5px;color:var(--ink)}
+.stato-vuoto p{margin:0;font-size:12.5px;max-width:32ch;line-height:1.55}
+.stato-vuoto .btn{margin-top:var(--s2)}
+
+/* --- Mobile: barra bassa più solida, intestazioni più compatte. --- */
+@media(max-width:760px){
+  .topbar{padding:8px 14px}
+  .wrap{padding:var(--s4) var(--s4) 104px}
+  h1{font-size:23px}
+  .tabbar{padding:var(--s1) var(--s2) calc(var(--s1) + var(--safe-b));
+    background:var(--surface);backdrop-filter:none;box-shadow:none}
+  .tabbar button{min-height:52px;gap:3px;font-size:10px;letter-spacing:.02em;border-radius:var(--r-control)}
+  .tabbar button.on{color:var(--accent);background:var(--accent-soft)}
+  .tabs{background:transparent;border:0;padding:0;gap:var(--s1);
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent);
+    mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent)}
+  .tabs button{padding:7px 12px}
+  .tabs button.on{background:var(--accent-soft);color:var(--accent);box-shadow:none}
+  .fab{bottom:calc(80px + var(--safe-b))}
+}

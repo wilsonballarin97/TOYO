@@ -1,0 +1,13 @@
+/* ============ DOCUMENTI PERSONA ============ */
+.docbtn{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:var(--r-btn);
+  border:1px solid var(--line);background:var(--surface);font-size:11.5px;font-weight:650;color:var(--ink-2);white-space:nowrap}
+.docbtn:hover{border-color:var(--terracotta);background:var(--terracotta-soft);color:var(--terracotta)}
+.docbtn.ok{background:var(--sage-soft);border-color:#CFE3D4;color:var(--sage)}
+.docbtn.miss{background:var(--surface-2);border-style:dashed}
+.pickdoc{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:var(--r-card);border:1px solid var(--line);
+  background:var(--surface);width:100%;margin-bottom:8px;transition:.14s}
+.pickdoc:hover{border-color:var(--terracotta);background:var(--terracotta-soft)}
+.pickdoc .fic{width:26px;height:32px;flex:0 0 26px;border-radius:var(--r-btn);display:grid;place-items:center;
+  font-size:7.5px;font-weight:700;color:#fff;background:var(--ink-3)}
+.pickdoc .t{font-size:13px;font-weight:650;display:block}
+.pickdoc .m{font-size:11.5px;color:var(--ink-3);display:block}

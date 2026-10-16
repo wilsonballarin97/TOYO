@@ -1,0 +1,50 @@
+/* ============ CERCA ============ */
+.barra-cerca{display:flex;align-items:center;gap:10px;padding:0 14px;height:46px;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r-chip);
+  box-shadow:var(--e1);color:var(--ink-3);transition:.15s}
+.barra-cerca:focus-within{border-color:var(--terracotta);box-shadow:0 0 0 3px var(--terracotta-soft),var(--e1)}
+.barra-cerca input{flex:1;min-width:0;border:0;background:none;outline:none;font-size:14.5px;color:var(--ink)}
+.barra-cerca input::placeholder{color:var(--ink-4)}
+.barra-cerca .pulisci{width:26px;height:26px;flex:0 0 26px;border-radius:var(--r-chip);display:grid;
+  place-items:center;background:var(--surface-2);color:var(--ink-3);font-size:12px}
+.barra-cerca .pulisci:hover{background:var(--line);color:var(--ink)}
+/* La versione non scrivibile che sta in cima alla bacheca e porta qui. */
+.barra-cerca.finta{cursor:pointer;font-size:14px}
+.barra-cerca.finta:hover{border-color:var(--line-strong)}
+.barra-cerca.finta span{flex:1;text-align:left}
+
+/* I posti: una foto, il nome sopra, e basta. Due per riga sul telefono,
+   quattro sul computer. Il velo scuro non è decorazione — senza, un nome
+   bianco su una spiaggia bianca non si legge. */
+.luoghi{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3)}
+.luogo{position:relative;aspect-ratio:4/3;border-radius:var(--r-card);overflow:hidden;padding:0;
+  background:var(--surface-2);border:1px solid var(--line);box-shadow:var(--e1);display:block}
+.luogo img{width:100%;height:100%;object-fit:cover;display:block}
+.luogo .senza{position:absolute;inset:0;display:grid;place-items:center;color:var(--ink-4);
+  background:var(--surface-2)}
+/* ⚠️ Il velo non e' decorazione: senza, il nome bianco del posto sparisce
+   sulle foto chiare. Era una sfumatura; adesso e' una FASCIA PIENA alta
+   quanto il testo, col bordo netto. Fa lo stesso lavoro e sta nella regola
+   del rebranding: nessuna sfumatura, da nessuna parte. */
+.luogo .velo{position:absolute;left:0;right:0;bottom:0;height:52%;background:rgba(28,22,18,.72)}
+.luogo .tt{position:absolute;left:0;right:0;bottom:0;padding:11px 12px;color:#fff;text-align:left}
+.luogo .tt b{display:block;font-size:14px;font-weight:700;letter-spacing:-.02em;line-height:1.2;
+  }
+.luogo .tt i{display:block;font-style:normal;font-size:11px;opacity:.86;margin-top:2px}
+.luogo:hover .velo{background:rgba(28,22,18,.82)}
+@media(min-width:700px){ .luoghi{grid-template-columns:repeat(3,1fr)} }
+
+.mini-foto{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.mini-foto figure{margin:0;position:relative;width:74px;height:74px;border-radius:var(--r-img);
+  overflow:hidden;border:1px solid var(--line);background:var(--surface-2)}
+.mini-foto img{width:100%;height:100%;object-fit:cover;display:block}
+.mini-foto .via{position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:var(--r-chip);
+  display:grid;place-items:center;background:rgba(43,36,32,.72);color:#fff;font-size:12px;line-height:1}
+.viewer-img{width:100%;display:block;border-radius:var(--r-img)}
+
+/* Le foto di qualcuno, tutte insieme: tre per riga, quadrate, senza cornice.
+   E' la forma che tutti riconoscono, e non serve inventarne un'altra. */
+.griglia-foto{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;margin-top:var(--s4)}
+.griglia-foto button{padding:0;aspect-ratio:1/1;border-radius:var(--r-img);overflow:hidden;
+  background:var(--surface-2);border:1px solid var(--line);display:block}
+.griglia-foto img{width:100%;height:100%;object-fit:cover;display:block}

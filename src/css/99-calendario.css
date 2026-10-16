@@ -1,0 +1,59 @@
+/* ── Calendario minimal (verde + bianco) ───────────────────────────── */
+:root{ --cal-green:#7D9B76; --cal-green-dark:#55744C; --cal-green-soft:#EDF2EA; }
+.cal-ov{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
+  background:rgba(30,38,28,.28);padding:18px;opacity:0;transition:opacity .16s ease}
+.cal-ov.on{opacity:1}
+.cal-card{width:100%;max-width:340px;background:#fff;border-radius:22px;padding:18px 18px 14px;
+  box-shadow:0 18px 50px rgba(40,55,38,.18);transform:translateY(8px);transition:transform .18s ease}
+.cal-ov.on .cal-card{transform:none}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.cal-title{font-size:15px;font-weight:700;color:#2C3A28;text-transform:capitalize;letter-spacing:.01em}
+.cal-nav{display:flex;gap:6px}
+.cal-nav button{width:32px;height:32px;border:0;border-radius:50%;background:#fff;color:var(--cal-green-dark);
+  font-size:16px;line-height:1;cursor:pointer;display:grid;place-items:center;transition:background .14s}
+.cal-nav button:hover{background:var(--cal-green-soft)}
+.cal-nav button:disabled{opacity:.25;cursor:default;background:#fff}
+.cal-dow,.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-dow span{text-align:center;font-size:11px;font-weight:600;color:#9AA694;padding-bottom:6px}
+.cal-grid button{aspect-ratio:1;border:0;background:transparent;border-radius:50%;font-size:13.5px;
+  color:#2C3A28;cursor:pointer;transition:background .12s,color .12s}
+.cal-grid button:hover:not(:disabled){background:var(--cal-green-soft)}
+.cal-grid button.empty{visibility:hidden}
+.cal-grid button.today{box-shadow:inset 0 0 0 1px var(--cal-green)}
+.cal-grid button.sel{background:var(--cal-green);color:#fff;font-weight:700}
+.cal-grid button:disabled{color:#CBD2C7;cursor:default}
+.cal-foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;
+  border-top:1px solid #EEF1EC}
+.cal-foot button{border:0;background:none;font-size:13px;font-weight:600;cursor:pointer;padding:6px 8px;border-radius:10px}
+.cal-clear{color:#9AA694}
+.cal-today{color:var(--cal-green-dark)}
+.cal-foot button:hover{background:var(--cal-green-soft)}
+
+/* ===== SCHEDE PIU' PULITE =====
+   Via il bordino bianco attorno alle foto: l'immagine arriva ai bordi
+   della scheda e prende il raggio solo in alto. */
+.tviaggio{padding:0}
+.tv-img{border-radius:0}
+.tcard,.ideacard,.tviaggio{border-color:var(--line);box-shadow:none}
+.tcard:hover,.ideacard:hover{box-shadow:0 6px 18px -12px rgba(34,38,31,.35);transform:translateY(-1px)}
+.scena-foto::after{background:linear-gradient(180deg,rgba(18,22,16,0) 38%,rgba(18,22,16,.52) 100%)}
+.tcard .top .tt,.ideahero-tx{background:linear-gradient(180deg,rgba(18,22,16,0),rgba(18,22,16,.72) 55%)}
+.tcard .top .badge{background:rgba(255,255,255,.92);box-shadow:none}
+.tcard .top .fl{display:none}
+
+/* ===== CERCA E PRENOTA ===== */
+.prenota-b{display:flex;flex-wrap:wrap;gap:18px}
+.prenota-g{flex:1 1 200px;min-width:190px}
+.prenota-t{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;
+  letter-spacing:.02em;color:var(--ink-3);margin-bottom:9px}
+.prenota-l{display:flex;flex-wrap:wrap;gap:7px}
+
+/* ===== ITINERARIO PER GIORNATE ===== */
+.giorno{margin-bottom:16px}
+.giorno-h{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;padding:0 2px 7px}
+.giorno-h .gn{font-size:14px;font-weight:700;color:var(--ink)}
+.giorno-h .gd{font-size:12px;color:var(--ink-3)}
+.giorno-h .btn{margin-left:auto}
+.spost{display:flex;align-items:center;gap:7px;padding:5px 12px 5px 22px;font-size:11.5px;color:var(--ink-3);
+  border-left:2px dashed var(--line);margin-left:20px}
+.spost svg{opacity:.7;flex:0 0 auto}

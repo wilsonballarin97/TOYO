@@ -1,0 +1,72 @@
+/* ============ CARD VIAGGIO ============ */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(288px,1fr));gap:15px}
+.tcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-card);box-shadow:var(--e1);
+  overflow:hidden;transition:transform .16s,box-shadow .16s,border-color .16s;display:flex;flex-direction:column;
+  text-align:left;width:100%;padding:0}
+.tcard:hover{transform:translateY(-2px);border-color:var(--line-strong);box-shadow:var(--e2)}
+.tcard:active{transform:translateY(0);box-shadow:var(--e1)}
+
+/* PRIMA densità: l'immagine arriva ai bordi, nessun margine. */
+.tcard .top{position:relative;height:132px;overflow:hidden;color:#fff}
+.tcard .top .scena{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+.tcard .top .fl{position:absolute;top:0;left:0;z-index:2;font-size:19px;line-height:1;
+  padding:7px 9px;background:rgba(18,12,8,.78)}
+.tcard .top .badge{position:absolute;top:0;right:0;z-index:2;font-size:10px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;padding:7px 10px;border-radius:var(--r-chip);background:#fff;color:var(--ink)}
+/* ⚠️ Il titolo reggeva grazie a un'ombra sfumata sotto le lettere: e' un
+   gradiente anche quello, e su un cielo chiaro non bastava comunque. Adesso
+   sta su una FASCIA PIENA larga quanto la scheda. Il contrasto non dipende
+   piu' da che colore c'e' sotto. */
+.tcard .top .tt{position:absolute;left:0;right:0;bottom:0;z-index:2;
+  padding:9px 12px 10px;background:rgba(18,12,8,.80)}
+.tcard .top .dove{font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#F6D98A;
+  margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tcard .top h3{font-size:19px;font-weight:700;letter-spacing:-.03em;line-height:1.12}
+.tcard .top .dt{font-size:11.5px;color:rgba(255,255,255,.9);margin-top:3px;font-weight:500}
+
+/* SECONDA densità: il corpo respira, margine 14. */
+.tcard .bd{padding:13px 14px;display:flex;flex-direction:column;gap:11px;flex:1}
+.tcard .teste-riga{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.teste{display:flex;align-items:center}
+.testa{width:27px;height:27px;border-radius:var(--r-chip);display:grid;place-items:center;color:#fff;
+  font-size:10px;font-weight:700;border:2px solid var(--surface);margin-left:-8px;letter-spacing:.02em}
+.testa:first-child{margin-left:0}
+.testa.piu{background:var(--surface-2);color:var(--ink-3);border-color:var(--surface)}
+.tcard .vuoto{font-size:12px;color:var(--ink-3)}
+.tcard .quotina{display:flex;flex-direction:column;gap:6px}
+.tcard .quotina .et{display:flex;align-items:baseline;font-size:11.5px;color:var(--ink-3);font-weight:600}
+.tcard .quotina .et .num{margin-left:auto;color:var(--ink);font-weight:700}
+
+/* TERZA densità: il piede è più stretto e su un fondo diverso. È la
+   variazione fra le tre che toglie l'aria di modello ripetuto. */
+.tcard .piede{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface-2);
+  border-top:1px solid var(--line);color:var(--ink-2);font-size:12px}
+.tcard .piede .et{font-weight:600;color:var(--ink-3)}
+.tcard .piede .sp{flex:1}
+.tcard .piede .num{font-weight:700;font-size:13.5px;color:var(--ink)}
+.tcard .piede .ico:last-child{color:var(--line-strong)}
+.tcard.past .top .scena{filter:saturate(.45) brightness(.96)}
+.tcard.past .piede .num{color:var(--ink-3)}
+
+.addcard{border:1.5px dashed var(--line-strong);background:var(--surface-2);border-radius:var(--r-card);
+  padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  text-align:center;transition:.16s;min-height:168px;width:100%}
+.addcard:hover{border-color:var(--terracotta);background:var(--terracotta-soft)}
+.addcard .ic{width:38px;height:38px;border-radius:var(--r-chip);display:grid;place-items:center;font-size:19px;
+  background:var(--surface);border:1px solid var(--line);color:var(--terracotta)}
+.addcard h3{font-size:14px}
+.addcard p{margin:0;font-size:12px;color:var(--ink-3);max-width:210px}
+
+.bar{height:6px;border-radius:var(--r-chip);background:var(--surface-2);overflow:hidden;border:1px solid var(--line);flex:1}
+.bar i{display:block;height:100%;border-radius:var(--r-chip);background:var(--terracotta)}
+.bar i.sage{background:var(--sage)}
+.bar i.gold{background:#8A6600}
+
+.pill{font-size:11px;font-weight:700;padding:5px 9px;border-radius:var(--r-chip);background:var(--surface-2);
+  border:1px solid var(--line);color:var(--ink-2);white-space:nowrap;
+  display:inline-flex;align-items:center;gap:5px;letter-spacing:.01em}
+.pill.warn{background:var(--terracotta-soft);border-color:var(--terracotta-soft);color:var(--terracotta)}
+.pill.ok{background:var(--sage-soft);border-color:var(--sage-soft);color:var(--sage)}
+.pill.info{background:var(--blue-soft);border-color:var(--blue-soft);color:var(--blue)}
+.pill.gold{background:var(--gold-soft);border-color:var(--gold-soft);color:#8A6600}
+.pill.red{background:var(--red-soft);border-color:#F0CFC9;color:var(--red)}

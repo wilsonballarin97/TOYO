@@ -1,0 +1,66 @@
+/* ============ HERO ============ */
+/* Il margine in alto non e' spazio vuoto: e' la finestra da cui si vede
+   l'illustrazione. Il pannello scuro sta in fondo, e quello che avanza
+   sopra e' il manifesto. */
+.hero{border-radius:var(--r-card);overflow:hidden;position:relative;color:#fff;padding:104px 0 0;
+  box-shadow:var(--e2);background:#2B2420;display:flex;flex-direction:column;justify-content:flex-end}
+/* ⚠️ L'illustrazione riempiva TUTTA l'apertura, pannello compreso: nella
+   striscia scoperta in cima capitava solo cielo, e le isole, la barca e il
+   mare restavano nascosti dietro al pannello. Adesso la figura sta dentro la
+   striscia e basta, cosi' quello che si vede e' la parte che vale. */
+.hero > .scena{position:absolute;left:0;right:0;top:0;height:104px;width:100%;display:block;z-index:0;pointer-events:none}
+/* ⚠️ Prima il testo galleggiava sopra l'illustrazione con un'ombra sotto le
+   lettere per farlo reggere. Adesso l'apertura e' fatta come un manifesto:
+   l'illustrazione sta sopra e si vede per intero, il testo sta sotto su un
+   PANNELLO PIENO, e fra i due c'e' una linea netta.
+   Il pannello non e' un elemento: sono le tre strisce di testo che hanno lo
+   STESSO fondo pieno e nessun margine fra loro, cosi' si saldano in un
+   blocco unico. Fatto cosi' vale per tutte e tre le aperture del file senza
+   toccarne il contenuto. */
+.hero-top,.hero-bar,.hero-prog{background:#241C18}
+.hero-top{display:flex;align-items:flex-start;gap:16px;position:relative;z-index:1;flex-wrap:wrap;
+  padding:14px 16px;margin:0}
+.hero .kick{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#F6D98A;font-weight:700;margin-bottom:5px}
+.hero h1{font-size:25px;font-weight:700;letter-spacing:-.032em;line-height:1.14}
+.hero-meta{display:flex;gap:14px;flex-wrap:wrap;margin-top:7px;font-size:12.5px;opacity:.95;font-weight:500}
+.hero-meta span{display:inline-flex;align-items:center;gap:6px}
+.countdown{margin-left:auto;text-align:center;background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.22);border-radius:var(--r-btn);padding:9px 16px}
+.countdown .n{font-size:25px;font-weight:700;letter-spacing:-.035em;line-height:1}
+.countdown .l{font-size:9.5px;text-transform:uppercase;letter-spacing:.09em;opacity:.9;margin-top:3px}
+.hero-bar{position:relative;z-index:1;margin-top:0;display:flex;align-items:center;gap:15px;flex-wrap:wrap;
+  border-top:1px solid rgba(255,255,255,.14);border-radius:var(--r-btn);padding:11px 16px}
+.stat .v{font-size:16.5px;font-weight:700;letter-spacing:-.025em}
+.stat .k{font-size:11px;opacity:.88}
+.vdiv{width:1px;height:24px;background:rgba(255,255,255,.3)}
+.hero-prog{position:relative;z-index:1;margin-top:0;padding:0 16px 12px}
+.hero-prog .track{height:7px;border-radius:var(--r-chip);background:rgba(255,255,255,.24);overflow:hidden}
+.hero-prog .track i{display:block;height:100%;background:#fff;border-radius:var(--r-chip);transition:width .5s}
+.hero-prog .lbl{display:flex;justify-content:space-between;font-size:11px;opacity:.9;margin-top:6px}
+
+/* ============ TESTATA DEL VIAGGIO ============
+   Scheda bianca, immagine in cima, e in fondo le facce di chi c'e'.
+   L'immagine sta DENTRO la scheda con un margine, e il suo raggio e' quello
+   della scheda meno quel margine: 16 meno 4 fa 12. Se fossero uguali si
+   vedrebbe una mezzaluna di bianco negli angoli. */
+.tviaggio{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-card);
+  box-shadow:var(--e1);overflow:hidden;padding:4px}
+.tv-img{position:relative;height:190px;border-radius:var(--r-img);overflow:hidden;background:var(--surface-2)}
+.tv-img .scena{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+.scena-foto{overflow:hidden}
+.scena-foto img{width:100%;height:100%;object-fit:cover;display:block}
+.scena-foto::after{content:"";position:absolute;inset:0;background:rgba(18,12,8,.26)}
+.tv-gg{position:absolute;top:10px;right:10px;background:var(--surface);color:var(--ink);
+  border-radius:var(--r-chip);padding:6px 12px;font-size:11px;font-weight:650;
+  display:flex;align-items:baseline;gap:5px;box-shadow:var(--e1)}
+.tv-gg b{font-size:15px;font-weight:800;letter-spacing:-.02em}
+.tv-tx{padding:14px 13px 12px}
+.tv-tx h1{font-size:23px;font-weight:800;letter-spacing:-.03em;line-height:1.15}
+.tv-meta{font-size:13px;color:var(--ink-3);margin-top:4px}
+.tv-num{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:12.5px;color:var(--ink-3)}
+.tv-num b{color:var(--ink);font-weight:700}
+.tv-num .urg b{color:var(--terracotta)}
+.tv-piede{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:12px 13px;border-top:1px solid var(--line)}
+.tv-soli{font-size:12.5px;color:var(--ink-3)}
+.tv-az{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}

@@ -1,0 +1,12 @@
+/* ============ TIMELINE ============ */
+.tl{position:relative;padding-left:19px}
+.tl::before{content:"";position:absolute;left:5px;top:6px;bottom:8px;width:2px;background:var(--line)}
+.tle{position:relative;padding:0 0 14px}
+.tle:last-child{padding-bottom:0}
+.tle::before{content:"";position:absolute;left:-18px;top:4px;width:10px;height:10px;border-radius:var(--r-chip);
+  background:var(--surface);border:2px solid var(--line-strong)}
+.tle.next::before{border-color:var(--terracotta);background:var(--terracotta)}
+.tle.done::before{border-color:var(--sage);background:var(--sage)}
+.tle .d{font-size:10.5px;color:var(--ink-3);font-weight:700;letter-spacing:.03em;text-transform:uppercase}
+.tle .t{font-size:13px;font-weight:650;margin-top:1px}
+.tle .m{font-size:11.5px;color:var(--ink-3)}
