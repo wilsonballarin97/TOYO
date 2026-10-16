@@ -1,0 +1,19 @@
+# Controllo automatico: a ogni push la build deve passare (sintassi JS, file
+# del service worker presenti, nessuna chiave secret nel codice).
+# Il deploy vero lo fa Cloudflare Pages, collegato al repo.
+name: build
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run check
