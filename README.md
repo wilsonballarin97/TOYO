@@ -51,6 +51,15 @@ il progetto scritto in `src/js/01-config.js`.
 Non serve più cambiare a mano `CACHE_VERSION`: i file escono con l'impronta
 nel nome e il service worker cambia versione da solo a ogni build.
 
+## Vecchio indirizzo (GitHub Pages)
+
+`index.html` e `sw.js` nella radice del repo **non sono l'app**: restano su
+`wilsonballarin97.github.io/TOYO` per chi aveva il vecchio indirizzo. La pagina
+manda al nuovo sito e, se sul telefono ci sono viaggi salvati senza account, li
+trasferisce con un tocco (postMessage verso `toyo-travel.pages.dev`, ricevuti
+da `src/js/31-trasloco.js`) o li fa scaricare come backup. `sw.js` spegne il
+vecchio service worker e svuota la sua cache.
+
 ## Supabase
 
 La chiave nel codice è quella pubblica, è normale che si veda. I dati li
