@@ -810,22 +810,7 @@ document.addEventListener('click', e => {
           try{
             const d = JSON.parse(r.result);
             if(!d || !d.viaggi) throw new Error('formato');
-            /* Sostituire tutto senza dire quanto si sta buttando via è il modo
-               più veloce per far perdere sei viaggi a chi apre il backup
-               sbagliato. */
-            daImportare = d;
-            const nDoc = (d.docs || []).length + (d.viaggi || []).reduce((n,t) => n + ((t.docs||[]).length), 0);
-            const quando = d.aggiornato ? new Date(d.aggiornato).toLocaleDateString('it-IT') : 'senza data';
-            modal(mHead('Importare questo backup?', 'Sostituisce tutto quello che hai adesso') +
-              '<div class="modal-b"><div style="font-size:13px;line-height:1.7;color:var(--ink-2)">' +
-                'Il file contiene <b>' + d.viaggi.length + (d.viaggi.length === 1 ? ' viaggio' : ' viaggi') + '</b> e <b>' +
-                nDoc + (nDoc === 1 ? ' documento' : ' documenti') + '</b> · ' + esc(quando) + '.<br><br>' +
-                'Al posto dei <b>' + (DB.viaggi || []).length + '</b> che hai ora.' +
-              '</div></div>' +
-              '<div class="modal-f"><button class="btn btn-ghost btn-sm" data-act="close-modal">Annulla</button>' +
-                '<span class="sp"></span>' +
-                '<button class="btn btn-ghost btn-sm" data-act="export"><svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v15M6 13l6 6 6-6"/></svg> Backup di adesso</button>' +
-                '<button class="btn btn-primary" data-act="do-import">Sostituisci</button></div>');
+            chiediImport(d);
           }catch(err){ toast('Questo file non è un backup TOYO'); }
         };
         r.readAsText(f);
