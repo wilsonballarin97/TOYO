@@ -1,54 +1,59 @@
 # TOYO · Travel on your own
 
-App per organizzare i viaggi (itinerario, prenotazioni, spese divise, documenti,
-decisioni del gruppo). Funziona anche offline ed è installabile come app sulla
-schermata Home (PWA).
+App per organizzare i viaggi di gruppo: itinerario, prenotazioni, spese divise,
+documenti, decisioni. Funziona offline ed è installabile sulla Home (PWA).
+Ospitata su **Cloudflare Pages**, dati su **Supabase**.
 
 ## Struttura
 
 ```
-index.html            l'app intera (HTML + CSS + JS in un solo file)
-manifest.webmanifest   metadati per l'installazione come app
-sw.js                   service worker: cache offline + aggiornamenti automatici
-icon-192.png            icona
-icon-512.png            icona
-icon-512-maskable.png   icona "maskable" (Android la ritaglia in un cerchio)
+src/
+  index.html        scheletro della pagina
+  css/NN-*.css      stili, uno per parte dell'interfaccia (uniti in ordine)
+  js/NN-*.js        codice, una sezione per file (uniti in ordine, stesso scope)
+  sw.js             service worker (versione e file da salvare li scrive la build)
+public/             copiato così com'è: foto/, icone, manifest, _headers
+functions/api/      Cloudflare Pages Functions
+  geocode.js        GET /api/geocode?q=…  ricerca luoghi via Nominatim, con cache
+  health.js         GET /api/health       stato del deploy e commit in linea
+build.mjs           build senza framework → dist/
 ```
 
-## Pubblicare su GitHub Pages
+Il numero davanti ai file decide l'ordine: `01-config.js` viene prima di tutto,
+`30-rete-e-avvio.js` chiude e avvia l'app. Per aggiungere una sezione basta un
+file nuovo col numero giusto.
 
-1. Crea un repository su GitHub (es. `TOYO`) e carica **tutti** questi file
-   nella radice del repository (non in una sottocartella), oppure clona il
-   repo vuoto e copiaceli dentro:
+## Comandi
 
-   ```bash
-   git init
-   git add .
-   git commit -m "Prima pubblicazione TOYO"
-   git branch -M main
-   git remote add origin https://github.com/TUO-UTENTE/TOYO.git
-   git push -u origin main
-   ```
+```bash
+npm install
+npm run dev       # http://localhost:8788, ricostruisce a ogni salvataggio
+npm run build     # produce dist/
+npm run preview   # build + Cloudflare in locale (Functions comprese)
+```
 
-2. Su GitHub: **Settings → Pages → Build and deployment → Source**, scegli
-   `Deploy from a branch`, branch `main`, cartella `/ (root)`. Salva.
+## Deploy (Cloudflare Pages)
 
-3. Dopo un minuto l'app è online su
-   `https://TUO-UTENTE.github.io/TOYO/` (i percorsi nel codice sono relativi
-   apposta per funzionare in una sottocartella come questa).
+Collegato al repo GitHub: ogni push su `main` va in produzione, ogni altro
+ramo ha un'anteprima con il suo indirizzo.
 
-## Aggiornare l'app dopo la prima pubblicazione
+| Impostazione        | Valore           |
+|---------------------|------------------|
+| Framework preset    | None             |
+| Build command       | `npm run build`  |
+| Output directory    | `dist`           |
+| Variabile `NODE_VERSION` | `20`        |
 
-Ogni volta che modifichi `index.html` (o le icone/manifest) e fai push su
-`main`, GitHub Pages ripubblica da solo. Ricordati però di **cambiare
-`CACHE_VERSION` in `sw.js`**: è quello che dice al telefono di chi ha già
-installato l'app "c'è una versione nuova, scaricala", altrimenti il service
-worker continua a servire la versione salvata in cache.
+Variabili facoltative (Settings → Variables and Secrets):
+`SUPABASE_URL` e `SUPABASE_KEY` (la chiave **publishable**). Se mancano, resta
+il progetto scritto in `src/js/01-config.js`.
 
-## Nota su Supabase
+Non serve più cambiare a mano `CACHE_VERSION`: i file escono con l'impronta
+nel nome e il service worker cambia versione da solo a ogni build.
 
-La chiave già scritta in `index.html` (`sb_publishable_...`) è quella
-**pubblica**: è normale che sia visibile nel codice, la vedono tutti quelli
-che usano l'app. A proteggere davvero i dati sono le regole di Row Level
-Security impostate lato Supabase — quelle sì vanno controllate lì, non qui.
-Non aggiungere mai la chiave `service_role` / `secret` in questo file.
+## Supabase
+
+La chiave nel codice è quella pubblica, è normale che si veda. I dati li
+proteggono le regole di Row Level Security su Supabase. La chiave
+`service_role` / `sb_secret_…` non va mai nel codice: la build si ferma se la
+trova.

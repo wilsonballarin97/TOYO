@@ -1,0 +1,17 @@
+{
+  "name": "toyo",
+  "version": "2.0.0",
+  "private": true,
+  "description": "TOYO · Travel on your own — app per organizzare i viaggi di gruppo",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "node build.mjs",
+    "dev": "node build.mjs --dev",
+    "preview": "node build.mjs && npx wrangler pages dev dist",
+    "check": "node build.mjs && node --check dist/sw.js"
+  },
+  "devDependencies": {
+    "esbuild": "0.23.1"
+  }
+}
