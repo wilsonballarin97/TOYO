@@ -1,0 +1,47 @@
+# Backup settimanale del database Supabase (il piano gratuito non ne fa).
+# Il file viene CIFRATO prima di essere salvato, perché il repo è pubblico.
+#
+# Per attivarlo servono due segreti (Settings → Secrets and variables → Actions):
+#   SUPABASE_DB_URL     stringa di connessione (Supabase → Connect → Session pooler)
+#   BACKUP_PASSPHRASE   una password lunga, da conservare: serve per aprire i backup
+# Senza segreti il job si salta da solo, senza errori.
+#
+# Per aprire un backup scaricato da Actions:
+#   gpg --decrypt toyo-db-AAAA-MM-GG.sql.gz.gpg | gunzip > backup.sql
+name: backup
+on:
+  schedule:
+    - cron: '41 3 * * 0'
+  workflow_dispatch:
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+    env:
+      DB: ${{ secrets.SUPABASE_DB_URL }}
+      PASS: ${{ secrets.BACKUP_PASSPHRASE }}
+    steps:
+      - name: Segreti presenti?
+        id: ok
+        run: |
+          if [ -n "$DB" ] && [ -n "$PASS" ]; then echo "si=1" >> "$GITHUB_OUTPUT"; else echo "Backup non configurato: mancano i segreti, salto."; fi
+      - name: Installa pg_dump 17
+        if: steps.ok.outputs.si == '1'
+        run: |
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl -fsSo /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client-17
+      - name: Dump e cifratura
+        if: steps.ok.outputs.si == '1'
+        run: |
+          F=toyo-db-$(date -u +%F).sql.gz.gpg
+          /usr/lib/postgresql/17/bin/pg_dump "$DB" --no-owner --no-privileges --schema=public --schema=auth --schema=storage \
+            | gzip -9 | gpg --batch --yes --pinentry-mode loopback --passphrase "$PASS" --symmetric --cipher-algo AES256 -o "$F"
+          ls -lh "$F"
+          echo "FILE=$F" >> "$GITHUB_ENV"
+      - uses: actions/upload-artifact@v4
+        if: steps.ok.outputs.si == '1'
+        with:
+          name: ${{ env.FILE }}
+          path: ${{ env.FILE }}
+          retention-days: 60
