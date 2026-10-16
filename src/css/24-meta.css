@@ -18,3 +18,9 @@
 .meta-nota{font-size:11.5px;color:var(--ink-3);margin-top:4px}
 .meta-link{display:inline-block;margin-top:8px;font-size:12.5px;font-weight:650;color:var(--terracotta)}
 .meta-fonti{font-size:10.5px;color:var(--ink-3);opacity:.8}
+
+/* ============ TRATTE E PARTNER ============ */
+.spost{flex-wrap:wrap}
+.spost-l{margin-left:auto;display:inline-flex;gap:4px;font-weight:650}
+.spost-l a{color:var(--terracotta);text-decoration:none}
+.prenota-nota{font-size:11.5px;color:var(--ink-3);border-top:1px solid var(--line);padding-top:10px}
