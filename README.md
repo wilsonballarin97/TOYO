@@ -16,6 +16,10 @@ public/             copiato così com'è: foto/, icone, manifest, _headers
 functions/api/      Cloudflare Pages Functions
   geocode.js        GET /api/geocode?q=…  ricerca luoghi via Nominatim, con cache
   health.js         GET /api/health       stato del deploy e commit in linea
+  info.js           GET /api/info?lat&lon&dal&al  meteo, paese, cambio, festività
+  cambi.js          GET /api/cambi?a=CZK,USD      cambi BCE del giorno
+  _middleware.js    errori in JSON, solo GET, intestazioni comuni
+lib/                codice condiviso dalle Functions (cache, chiamate, schede paese)
 build.mjs           build senza framework → dist/
 ```
 
@@ -59,6 +63,23 @@ manda al nuovo sito e, se sul telefono ci sono viaggi salvati senza account, li
 trasferisce con un tocco (postMessage verso `toyo-travel.pages.dev`, ricevuti
 da `src/js/31-trasloco.js`) o li fa scaricare come backup. `sw.js` spegne il
 vecchio service worker e svuota la sua cache.
+
+## Automazioni su GitHub (Actions)
+
+- `build`: a ogni push controlla che la build passi.
+- `supabase-sveglia`: ogni 3 giorni una richiesta leggera, così il piano
+  gratuito di Supabase non mette in pausa il progetto.
+- `backup`: ogni domenica copia cifrata del database. Si attiva aggiungendo i
+  segreti `SUPABASE_DB_URL` e `BACKUP_PASSPHRASE` (istruzioni nel file).
+
+## Servizi esterni e licenze
+
+| Servizio | Per cosa | Condizioni |
+|---|---|---|
+| OpenStreetMap / Nominatim | ricerca luoghi, paese | max 1 richiesta/s, niente autocompletamento, attribuzione ODbL |
+| Open-Meteo | meteo e clima | gratis solo per uso non commerciale, CC BY 4.0 |
+| Frankfurter (BCE) | cambi | gratis, senza chiave |
+| Nager.Date | festività | gratis, senza chiave |
 
 ## Supabase
 
