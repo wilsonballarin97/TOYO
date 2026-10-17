@@ -162,10 +162,14 @@ function viewPrivacy(){
     <div class="card-b" style="font-size:13px;line-height:1.7;color:var(--ink-2)">
       Nessuna pubblicità, nessuna rivendita di dati, nessun tracciamento di terze parti.
       TOYO non chiede l'email: se entri con un nome utente, un indirizzo di posta non esiste
-      proprio.<br><br>
+      proprio. Se entri con Google, arrivano nome, email e foto del profilo: l'email resta
+      privata e gli altri vedono solo il tuo nome utente.<br><br>
       <b>Servizi esterni contattati:</b> Supabase (account e dati), jsDelivr (la libreria del
       programma), e — solo se cerchi un luogo o apri la mappa — Google Maps oppure
       OpenStreetMap. A loro arriva quello che scrivi nella casella di ricerca.
+      Meteo, cambi, festività, foto delle città e orari dei mezzi passano dal server di TOYO,
+      che manda ai servizi pubblici solo il luogo e le date.<br><br>
+      <a href="/privacy.html" target="_blank" rel="noopener" style="color:var(--terracotta);font-weight:650">Informativa completa ↗</a>
     </div>
   </div>
 
