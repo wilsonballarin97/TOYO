@@ -42,13 +42,17 @@ self.addEventListener('fetch', event => {
   if (url.origin !== self.location.origin) return;     // Supabase, Maps…: rete
   if (url.pathname.startsWith('/api/')) return;        // Functions: sempre rete
 
-  // Navigazione: rete prima (versione fresca), cache se offline.
+  // Navigazione: rete prima (versione fresca), cache se offline. Solo l'app
+  // vera finisce in cache come /index.html; le altre pagine (es. /privacy.html)
+  // offline cadono sulla copia salvata di sé stesse o sull'app.
   if (req.mode === 'navigate') {
+    const app = url.pathname === '/' || url.pathname === '/index.html';
     event.respondWith(
       fetch(req).then(res => {
-        if (res.ok) { const c = res.clone(); caches.open(CACHE_SHELL).then(k => k.put('/index.html', c)); }
+        if (res.ok) { const c = res.clone(); caches.open(CACHE_SHELL).then(k => k.put(app ? '/index.html' : req, c)); }
         return res;
-      }).catch(() => caches.match('/index.html', { ignoreSearch: true }))
+      }).catch(() => caches.match(app ? '/index.html' : req, { ignoreSearch: true })
+        .then(r => r || caches.match('/index.html')))
     );
     return;
   }
