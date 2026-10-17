@@ -91,6 +91,7 @@ async function build() {
   let js = unisci(join(SRC, 'js'), '.js')
     .replaceAll("'__SUPABASE_URL__'", `'${sicura(process.env.SUPABASE_URL)}'`)
     .replaceAll("'__SUPABASE_KEY__'", `'${sicura(process.env.SUPABASE_KEY)}'`)
+    .replaceAll("'__TOYO_USO__'", `'${process.env.TOYO_USO === 'commerciale' ? 'commerciale' : ''}'`)
     .replaceAll("'__BUILD__'", `'${sicura(DEV ? 'dev' : datiBuild())}'`)
     .replace('{} /*@PARTNER*/', JSON.stringify(partner()));
   if (/sb_secret_[A-Za-z0-9_-]{8,}/.test(js)) {

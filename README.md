@@ -18,13 +18,15 @@ functions/api/      Cloudflare Pages Functions
   health.js         GET /api/health       stato del deploy e commit in linea
   info.js           GET /api/info?lat&lon&dal&al  meteo, paese, cambio, festività
   cambi.js          GET /api/cambi?a=CZK,USD      cambi BCE del giorno
+  foto.js           GET /api/foto?q=Praga         foto della città con autore e licenza
+  tratta.js         GET /api/tratta?da&a&quando   mezzi pubblici fra due punti (Transitous)
   _middleware.js    errori in JSON, solo GET, intestazioni comuni
 lib/                codice condiviso dalle Functions (cache, chiamate, schede paese)
 build.mjs           build senza framework → dist/
 ```
 
 Il numero davanti ai file decide l'ordine: `01-config.js` viene prima di tutto,
-`30-rete-e-avvio.js` chiude e avvia l'app. Per aggiungere una sezione basta un
+`98-avvio.js` avvia l'app. Per aggiungere una sezione basta un
 file nuovo col numero giusto.
 
 ## Comandi
@@ -77,15 +79,23 @@ vecchio service worker e svuota la sua cache.
 | Servizio | Per cosa | Condizioni |
 |---|---|---|
 | OpenStreetMap / Nominatim | ricerca luoghi, paese | max 1 richiesta/s, niente autocompletamento, attribuzione ODbL |
-| MET Norway | previsioni (fino a ~9 giorni) | gratis anche commerciale, CC BY 4.0, User-Agent obbligatorio |
-| NASA POWER | clima dell'anno scorso | gratis, dati pubblici |
+| Open-Meteo | previsioni a 16 giorni, clima medio degli ultimi 5 anni (modalità personale) | gratis solo per uso non commerciale, CC BY 4.0 |
+| MET Norway + NASA POWER | meteo in modalità commerciale | gratis anche commerciale |
+| Wikipedia / Wikidata / Wikimedia Commons | foto delle città (`/api/foto`) | licenze libere, uso commerciale ok citando autore e licenza (l'app li mostra) |
+| Transitous | orari dei mezzi fra due punti (`/api/tratta`) | solo progetti non commerciali e open source, uso leggero; spento con `TOYO_USO=commerciale` |
 | Google Maps (link) | come arrivare fra due punti (mezzi, piedi, auto) | solo link, nessuna API né costo |
 | Frankfurter (BCE) | cambi | gratis, senza chiave |
 | Nager.Date | festività | gratis, senza chiave |
 
-Tutte le fonti permettono l'uso commerciale: TOYO può avere link di
-affiliazione o abbonamenti senza cambiare niente qui. (Open-Meteo, Transitous e
-GraphHopper sono stati scartati apposta: gratis solo per uso non commerciale.)
+### Modalità: personale o commerciale
+
+Finché TOYO non guadagna (niente pubblicità, abbonamenti o commissioni) usa i
+servizi gratuiti "solo non commerciali", che sono i più precisi. Il giorno che
+si attivano affiliazioni o abbonamenti, su Cloudflare si imposta la variabile
+`TOYO_USO=commerciale` e TOYO passa da solo alle fonti che lo permettono
+(oggi: il meteo da Open-Meteo a MET Norway + NASA POWER, e gli orari dei
+mezzi di Transitous si spengono).
+**Attenzione:** i codici in `TOYO_PARTNER` sono già un uso commerciale.
 
 ## Affiliazioni
 
@@ -113,6 +123,15 @@ Marche disponibili: `ryanair`, `skyscanner`, `booking`, `airbnb`,
 `heymondo`. Una marca senza codice resta un link normale. Quando c'è almeno un
 codice, sotto i link compare la frase che dichiara l'affiliazione, e i link
 affiliati hanno `rel="sponsored"`. Un valore scritto male ferma la build.
+
+## Licenza
+
+TOYO è software libero: [GNU AGPL-3.0 o successiva](LICENSE). Chiunque può
+leggere, usare e modificare il codice; chi ne fa girare una versione modificata
+come servizio online deve pubblicare anche le sue modifiche. Nell'app, in
+Impostazioni, c'è il link al codice sorgente (lo chiede la licenza).
+
+Copyright (C) 2026 wilsonballarin97.
 
 ## Supabase
 
