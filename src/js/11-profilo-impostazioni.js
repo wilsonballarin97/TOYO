@@ -240,7 +240,8 @@ function viewImpostazioni(){
         </div>
         <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:12px">
           <button class="btn btn-ghost btn-sm" data-act="esci-account">Esci dall'account</button>
-          <button class="btn btn-ghost btn-sm" data-act="cambia-pw">${ico('chiave',16)}<span>Cambia password</span></button>
+          ${eNick(utente.email) ? `<button class="btn btn-ghost btn-sm" data-act="cambia-pw">${ico('chiave',16)}<span>Cambia password</span></button>`
+            : '<span class="tiny">Entri con Google: la password la gestisce Google.</span>'}
           ${cloudCfg && cloudCfg.dalFile ? '' : '<button class="btn btn-ghost btn-sm" data-act="togli-cloud">Stacca questo dispositivo</button>'}
           <button class="btn btn-ghost btn-sm" data-act="diagnosi">${ico('lente',16)}<span>Verifica collegamento</span></button>
           <button class="btn btn-danger btn-sm" data-act="elimina-account">Elimina l'account</button>
@@ -416,6 +417,8 @@ function viewAuth(){
         <button class="${authTab === 'entra' ? 'on' : ''}" data-act="auth-tab" data-v="entra">Accedi</button>
         <button class="${authTab === 'registra' ? 'on' : ''}" data-act="auth-tab" data-v="registra">Registrati</button>
       </div>
+
+      ${bottoneGoogle()}
 
       ${authTab === 'registra' ? `
         <h2>Crea il tuo account</h2>

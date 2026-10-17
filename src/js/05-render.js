@@ -44,6 +44,14 @@ async function boot(){
     return;
   }
 
+  pulisciUrlGoogle();
+  /* Entrato con Google ma senza nome utente: prima si sceglie quello. */
+  if(utente && !nickDi(utente)){
+    $('onb').innerHTML = viewSceltaNick();
+    $('onb').classList.remove('hide'); $('app').classList.add('hide');
+    return;
+  }
+
   /* account configurato ma nessuno è entrato → schermata di accesso */
   if(cloudAttivo() && !utente && !DB.soloLocale){
     $('onb').innerHTML = viewAuth();
@@ -93,7 +101,7 @@ function render(){
     (org ? '<button class="mi" data-act="new-trip"><span class="si">＋</span>Nuovo viaggio</button>'
          : '<button class="mi" data-act="apri-invito"><span class="si">' + ico('bustaGiu',18) + '</span>Ho un link di invito</button>');
 
-  const sotto = utente ? (eNick(utente.email) ? '@' + nickDi(utente) : utente.email) : DB.profilo.email;
+  const sotto = utente ? (nickDi(utente) ? '@' + nickDi(utente) : utente.email) : DB.profilo.email;
   $('userMenu').innerHTML =
     '<div class="menu-lbl">' + esc(DB.profilo.nome + ' ' + (DB.profilo.cognome||'')) + '</div>' +
     (sotto ? '<div style="padding:0 10px 8px;font-size:11.5px;color:var(--ink-3);word-break:break-all">' + esc(sotto) + '</div>' : '') +

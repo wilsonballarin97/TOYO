@@ -164,7 +164,8 @@ async function allineaBlob(){
     const localePieno = DB.profilo || (DB.viaggi && DB.viaggi.length);
     if(!remoto || !remoto.dati || !remoto.dati.profilo){
       if(localePieno){ await inviaDati(); }
-      else { DB.profilo = DB.profilo || {nome:nickDi(utente) || 'Tu', cognome:'', nick:nickDi(utente),
+      else { const mm = (utente.user_metadata) || {};
+        DB.profilo = DB.profilo || {nome:mm.nome || nickDi(utente) || 'Tu', cognome:mm.cognome || '', nick:nickDi(utente),
         email: eNick(utente.email) ? '' : (utente.email || ''), tel:'', nascita:'', nazione:'', cf:''}; await inviaDati(); }
       return;
     }

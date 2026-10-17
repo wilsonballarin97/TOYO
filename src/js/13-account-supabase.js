@@ -624,7 +624,7 @@ async function initCloud(){
   if(!cloudAttivo()) return false;
   try{
     const mod = await import(LIB_SUPABASE);
-    sb = mod.createClient(cloudCfg.url, cloudCfg.key);
+    sb = mod.createClient(cloudCfg.url, cloudCfg.key, OPZIONI_SB);
     const {data} = await sb.auth.getSession();
     utente = data && data.session ? data.session.user : null;
     sb.auth.onAuthStateChange((ev, sess) => {
@@ -684,7 +684,7 @@ async function diagnosi(){
     if(!sb){
       try{
         const mod = await import(LIB_SUPABASE);
-        sb = mod.createClient(cloudCfg.url, cloudCfg.key);
+        sb = mod.createClient(cloudCfg.url, cloudCfg.key, OPZIONI_SB);
         ok('Libreria Supabase', 'caricata ora');
       }catch(e){
         libreriaKo = true;

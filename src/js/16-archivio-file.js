@@ -88,7 +88,9 @@ function nickDi(u){
   const m = (u && u.user_metadata) || {};
   if(m.nick) return m.nick;
   const e = (u && u.email) || '';
-  return eNick(e) ? e.split('@')[0] : e;
+  /* Chi entra con Google ha un'email vera: non diventa MAI il suo nome
+     pubblico. Finché non sceglie un nome utente, qui resta vuoto. */
+  return eNick(e) ? e.split('@')[0] : '';
 }
 
 /* ---- azioni di autenticazione ---- */
