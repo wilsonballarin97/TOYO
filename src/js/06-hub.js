@@ -96,7 +96,7 @@ function heroProssimo(t, org){
   const s = statoViaggio(t);
   return `
   <section class="hero">
-    ${scenaViaggio(t.tema)}
+    ${scenaViaggio(t.tema, cittaDi(t), true)}
     <div class="hero-top">
       <div>
         <div class="kick">Ciao ${esc(DB.profilo.nome)}, il prossimo viaggio</div>
@@ -190,7 +190,7 @@ function cardViaggio(t){
   return `
   <button class="tcard ${inArchivio ? 'past' : ''}" data-act="open-trip" data-id="${esc(t.id)}">
     <div class="top">
-      ${scenaViaggio(t.tema)}
+      ${scenaViaggio(t.tema, cittaDi(t))}
       <span class="fl">${esc(t.emoji)}</span>
       <span class="badge">${badge}</span>
       <div class="tt">

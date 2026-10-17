@@ -147,6 +147,7 @@ function render(){
   if(V.view === 'trip' && V.tab === 'itinerario') disegnaMappa(viaggio());
   else distruggiMappa();
   if(V.view === 'trip' && $('metaBody') && viaggio()) riempiMeta(viaggio());
+  applicaFotoCitta();
 }
 function roleItem(r, ic, nm, dt){
   return '<button class="mi ' + (DB.ruolo === r ? 'active' : '') + '" data-act="set-role" data-role="' + r + '">' +

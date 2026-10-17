@@ -32,7 +32,8 @@ function viewTrip(t){
        pulsanti tutti uguali: diceva molto e non guidava a niente. Qui il
        primo sguardo cade sul nome del viaggio, il secondo sulle facce. -->
   <section class="tviaggio">
-    <div class="tv-img">${scenaViaggio(t.tema)}
+    <div class="tv-img">${scenaViaggio(t.tema, cittaDi(t), true)}
+      <a class="foto-cred" id="tvCred" target="_blank" rel="noopener" hidden></a>
       ${gg != null && gg >= 0 ? '<span class="tv-gg"><b class="num">' + gg + '</b>' + (gg === 1 ? 'giorno' : 'giorni') + '</span>' : ''}
     </div>
     <div class="tv-tx">

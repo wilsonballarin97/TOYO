@@ -37,5 +37,3 @@ function inApp(){
 document.querySelectorAll('[data-ico]').forEach(el => {
   el.innerHTML = ico(el.dataset.ico, parseInt(el.dataset.icoPx, 10) || 20);
 });
-
-boot();

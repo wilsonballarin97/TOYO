@@ -1,7 +1,7 @@
 /* ==========================================================================
    LA META · meteo, paese, cambio e festività nella panoramica del viaggio
    I dati arrivano da /api/info (Cloudflare), che mette insieme OpenStreetMap,
-   MET Norway, NASA POWER, BCE e Nager.Date. La scheda si disegna vuota insieme al resto
+   Open-Meteo (o MET Norway e NASA POWER in modalità commerciale), BCE e Nager.Date. La scheda si disegna vuota insieme al resto
    e si riempie appena arriva la risposta; le risposte restano in memoria per
    la sessione, così cambiare scheda e tornare non rifà le domande.
    ========================================================================== */
@@ -19,12 +19,14 @@ function cardMeta(t){
   if(!t.dove && !puntoMeta(t)) return '';
   return `<div class="card meta-card" id="metaCard">
     <div class="card-h"><div><h3>La meta</h3><div class="sub" id="metaSub">${esc(t.dove || '')}</div></div></div>
+    <div class="card-b" id="metaFoto" hidden></div>
     <div class="card-b" id="metaBody"><div class="meta-wait">Guardo meteo e informazioni utili…</div></div>
   </div>`;
 }
 
 async function riempiMeta(t){
   const box = $('metaBody'); if(!box) return;
+  galleriaCitta(cittaDi(t));
   try{
     let p = puntoMeta(t);
     if(!p && t.dove){
@@ -61,7 +63,16 @@ const METEO = [
   [/heavyrain/,'🌧️','Pioggia forte'],[/rainshowers/,'🌦️','Rovesci'],[/lightrain/,'🌦️','Pioggia debole'],[/rain/,'🌧️','Pioggia'],
   [/fog/,'🌫️','Nebbia'],[/partlycloudy/,'⛅','Poco nuvoloso'],[/cloudy/,'☁️','Coperto'],[/fair/,'🌤️','Quasi sereno'],[/clearsky/,'☀️','Sereno']
 ];
-const meteoDi = s => (METEO.find(x => x[0].test(s || '')) || [null,'🌡️','—']);
+/* Codici WMO di Open-Meteo. */
+const WMO = [
+  [[0],'☀️','Sereno'],[[1],'🌤️','Quasi sereno'],[[2],'⛅','Poco nuvoloso'],[[3],'☁️','Coperto'],[[45,48],'🌫️','Nebbia'],
+  [[51,53,55,56,57],'🌦️','Pioviggine'],[[61],'🌦️','Pioggia debole'],[[63,66],'🌧️','Pioggia'],[[65,67],'🌧️','Pioggia forte'],
+  [[71,77],'🌨️','Neve debole'],[[73],'🌨️','Neve'],[[75],'❄️','Neve forte'],[[80,81],'🌦️','Rovesci'],[[82],'⛈️','Rovesci forti'],
+  [[85,86],'🌨️','Rovesci di neve'],[[95,96,99],'⛈️','Temporale']
+];
+const meteoDi = g => g.codice != null
+  ? (WMO.find(x => x[0].includes(g.codice)) || [null,'🌡️','—'])
+  : (METEO.find(x => x[0].test(g.simbolo || '')) || [null,'🌡️','—']);
 const giornoCorto = iso => new Date(iso + 'T12:00:00').toLocaleDateString('it-IT', {weekday:'short', day:'numeric'});
 
 function htmlMeta(d, t){
@@ -69,17 +80,26 @@ function htmlMeta(d, t){
   const m = d.meteo;
   if(m && m.tipo === 'previsione' && m.giorni.length){
     parti.push('<div class="meta-sez"><div class="meta-tit">Previsioni</div><div class="meta-giorni">' +
-      m.giorni.slice(0, 8).map(g => { const w = meteoDi(g.simbolo);
-        return '<div class="meta-g" title="' + esc(w[2]) + '"><span class="d">' + esc(giornoCorto(g.data)) + '</span>' +
+      m.giorni.slice(0, 16).map(g => { const w = meteoDi(g);
+        const info = [w[2], g.vento != null ? 'vento fino a ' + g.vento + ' km/h' : '', g.uv != null ? 'UV ' + g.uv : '',
+          g.alba ? 'alba ' + g.alba + ', tramonto ' + g.tramonto : ''].filter(Boolean).join(' · ');
+        return '<div class="meta-g" title="' + esc(info) + '"><span class="d">' + esc(giornoCorto(g.data)) + '</span>' +
           '<span class="e" aria-label="' + esc(w[2]) + '">' + w[1] + '</span>' +
           '<span class="t"><b>' + g.max + '°</b> ' + g.min + '°</span>' +
-          (g.mm >= 1 ? '<span class="p">' + String(g.mm).replace('.', ',') + ' mm</span>' : '') + '</div>'; }).join('') +
-      '</div>' + (m.giorni.length > 8 ? '<div class="meta-nota">Altri ' + (m.giorni.length - 8) + ' giorni nelle previsioni.</div>' : '') + '</div>');
+          (g.pioggia != null ? (g.pioggia >= 20 ? '<span class="p">💧 ' + g.pioggia + '%</span>' : '')
+            : (g.mm >= 1 ? '<span class="p">' + String(g.mm).replace('.', ',') + ' mm</span>' : '')) +
+          (g.vento >= 40 ? '<span class="p v">💨 ' + g.vento + '</span>' : '') +
+          (g.uv >= 7 ? '<span class="p v">UV ' + g.uv + '</span>' : '') + '</div>'; }).join('') +
+      '</div>' + (m.giorni[0] && m.giorni[0].alba ? '<div class="meta-nota">Il primo giorno: alba ' + esc(m.giorni[0].alba) +
+        ', tramonto ' + esc(m.giorni[0].tramonto) + '.</div>' : '') + '</div>');
   } else if(m && m.tipo === 'clima' && m.max != null){
     parti.push('<div class="meta-sez"><div class="meta-tit">Che tempo aspettarsi</div>' +
       '<div class="meta-clima"><b>' + m.max + '°</b> di giorno, <b>' + m.min + '°</b> di notte · ' +
       (m.giorniPioggia ? m.giorniPioggia + ' su ' + m.giorni + ' giorni di pioggia' : 'niente pioggia') + '</div>' +
-      '<div class="meta-nota">Com\'era negli stessi giorni del ' + m.anno + '. Le previsioni vere arrivano una decina di giorni prima della partenza.</div></div>');
+      (m.anni ? '<div class="meta-nota">Media degli stessi giorni negli ultimi ' + m.anni + ' anni' +
+          (m.record ? ' · estremi ' + m.record.max + '° / ' + m.record.min + '°' : '') +
+          '. Le previsioni vere arrivano 16 giorni prima della partenza.</div></div>'
+        : '<div class="meta-nota">Com\'era negli stessi giorni del ' + m.anno + '. Le previsioni vere arrivano una decina di giorni prima della partenza.</div></div>'));
   }
   if(d.festivita && d.festivita.length){
     parti.push('<div class="meta-sez"><div class="meta-tit">Festività durante il viaggio</div>' +
@@ -102,5 +122,6 @@ function htmlMeta(d, t){
       '</div>');
   }
   if(!parti.length) return '<div class="meta-wait">Nessuna informazione utile per queste date.</div>';
-  return parti.join('') + '<div class="meta-fonti">Meteo MET Norway e NASA POWER · cambi BCE · festività Nager.Date · © OpenStreetMap</div>';
+  return parti.join('') + '<div class="meta-fonti">' + (d.meteoDa === 'open-meteo' ? '<a href="https://open-meteo.com/" target="_blank" rel="noopener">Meteo Open-Meteo.com</a>' : 'Meteo MET Norway e NASA POWER') +
+    ' · cambi BCE · festività Nager.Date · © OpenStreetMap</div>';
 }

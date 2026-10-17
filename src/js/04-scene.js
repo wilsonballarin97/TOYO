@@ -65,10 +65,18 @@ const CIELI = [
 /* Il velo scuro che sale dal basso serve a una cosa sola: far reggere il
    bianco del titolo su qualunque cielo, senza dover scegliere il colore del
    testo caso per caso. */
-function scenaViaggio(tema){
+/* Con `citta` la foto del tema fa da segnaposto: appena arriva una foto vera
+   della città (34-foto-citta.js) prende il suo posto. `grande` per la
+   testata del viaggio, altrimenti basta la versione piccola. */
+function scenaViaggio(tema, citta, grande){
   const i = Math.max(0, Math.min(5, num(tema) || 0));
+  const c = citta && fotoInCache(citta);
+  const f = c && c.foto && c.foto[0];
+  const src = f ? (grande ? f.url : f.mini) : 'foto/tema-' + i + '.jpg';
   return '<span class="scena scena-foto">' +
-    '<img src="foto/tema-' + i + '.jpg" alt="" loading="lazy" decoding="async">' +
+    '<img src="' + esc(src) + '" alt="" loading="lazy" decoding="async"' +
+      (citta ? ' data-citta="' + esc(citta) + '"' + (grande ? ' data-grande="1"' : '') + (f ? ' data-ok="1"' : '') : '') +
+      (f ? ' title="Foto: ' + esc(f.autore + ' · ' + f.licenza) + '"' : '') + '>' +
   '</span>';
 }
 
