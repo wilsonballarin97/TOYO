@@ -22,6 +22,10 @@ const TOYO_CONFIG = {
    finché è vuota i link funzionano uguale, solo senza commissione.
    Formato e esempi nel README, sezione "Affiliazioni". */
 const TOYO_PARTNER = {} /*@PARTNER*/;
+/* "personale" (predefinito, TOYO non guadagna) o "commerciale": decide quali
+   servizi si possono usare (Open-Meteo e Transitous solo in personale).
+   Arriva dalla variabile TOYO_USO su Cloudflare, scritta dalla build. */
+const TOYO_USO = '__TOYO_USO__' || 'personale';
 /* Scritto dalla build: data e commit da cui è stata generata questa versione. */
 const TOYO_BUILD = '__BUILD__';
 /* ▲▲▲  fine configurazione  ▲▲▲ */

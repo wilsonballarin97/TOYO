@@ -464,7 +464,7 @@ function viewAuth(){
           <button style="font-size:11.5px;font-weight:650;color:var(--ink-3)" data-act="config-cloud"><svg class="ico" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.6M12 18.6v2.6M21.2 12h-2.6M5.4 12H2.8M18.5 5.5l-1.8 1.8M7.3 16.7l-1.8 1.8M18.5 18.5l-1.8-1.8M7.3 7.3L5.5 5.5"/></svg> Cambia progetto o chiave</button>
           <button style="font-size:11.5px;font-weight:650;color:var(--ink-3)" data-act="diagnosi">${ico('lente',16)}<span>Verifica collegamento</span></button>
         </div>
-        <p class="tiny" style="margin-top:12px;text-align:center;opacity:.7">TOYO ${VERSIONE}</p>
+        <p class="tiny" style="margin-top:12px;text-align:center;opacity:.7">TOYO ${VERSIONE} · software libero AGPL-3.0 · <a href="https://github.com/wilsonballarin97/TOYO" target="_blank" rel="noopener" style="color:inherit">codice sorgente</a></p>
       </div>
     </div>
   </main>`;

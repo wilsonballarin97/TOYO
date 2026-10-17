@@ -308,7 +308,7 @@ function tabItinerario(t){
       righe.push(rigaTappa(x));
       const sp = i < g.lista.length - 1 ? spostamento(x, g.lista[i+1]) : null;
       if(sp) righe.push(`<div class="spost">${ico(sp.ico,13)}<span>${sp.tempo} ${sp.come} · ${sp.dist}</span>` +
-        `<span class="spost-l">${tratta(x, g.lista[i+1])}</span></div>`);
+        `<span class="spost-l">${tratta(x, g.lista[i+1])}${linkOrari(x, g.lista[i+1])}</span></div>`);
     });
     const ottimizzabile = posso(t) && g.data && g.lista.filter(x => x.lat && x.lon).length >= 3;
     return `
