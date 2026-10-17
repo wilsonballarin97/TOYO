@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#F5F0E8">
+<title>TOYO · Privacy</title>
+<style>
+  :root{--bg:#F6F0E7;--card:#FFFCF8;--ink:#2B2420;--ink2:#5C5148;--line:#E8DFD1;--verde:#2F5C40}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:24px 16px 48px}
+  main{max-width:720px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:28px 24px}
+  h1{font-size:24px;margin:0 0 4px} h2{font-size:17px;margin:26px 0 6px}
+  p,li{color:var(--ink2)} a{color:var(--verde);font-weight:600}
+  .brand{display:flex;align-items:center;gap:10px;margin-bottom:18px;font-weight:800;letter-spacing:.04em}
+  .mark{width:36px;height:36px;border-radius:11px;background:var(--verde);color:#fff;display:grid;place-items:center}
+  .agg{font-size:13px;color:var(--ink2)}
+</style>
+</head>
+<body>
+<main>
+  <div class="brand"><span class="mark">◈</span>TOYO</div>
+  <h1>Informativa sulla privacy</h1>
+  <p class="agg">TOYO · Travel on your own — ultimo aggiornamento: ottobre 2026</p>
+
+  <h2>Chi tratta i dati</h2>
+  <p>TOYO è un progetto personale e gratuito, senza pubblicità, sviluppato da Wilson Ballarin.
+  Per qualsiasi domanda o richiesta sui tuoi dati scrivi a <a href="mailto:info@wilsonballarin.com">info@wilsonballarin.com</a>.</p>
+
+  <h2>Quali dati e dove stanno</h2>
+  <ul>
+    <li><b>Senza account</b>: tutto resta nel browser del tuo dispositivo e non viene inviato a nessuno.</li>
+    <li><b>Con l'account</b>: viaggi, spese, sondaggi e documenti sono salvati su un database Supabase,
+      con regole che fanno vedere a ognuno solo i propri dati e i viaggi a cui è stato invitato.
+      Gli allegati stanno in un archivio privato intestato al tuo account.</li>
+    <li><b>Bacheca</b>: quello che pubblichi nella bacheca, e la foto del profilo, sono visibili agli altri iscritti.
+      Puoi nascondere il tuo profilo dalle impostazioni.</li>
+  </ul>
+
+  <h2>Accesso con Google</h2>
+  <p>Se scegli "Continua con Google", Google ci comunica il tuo <b>nome</b>, la tua <b>email</b> e la
+  <b>foto del profilo</b>. Li usiamo solo per creare e riconoscere il tuo account.
+  L'email resta privata: gli altri utenti vedono solo il nome utente che scegli.
+  Non chiediamo accesso a Gmail, Drive, contatti o altri dati del tuo account Google,
+  e non li condividiamo con nessuno. Puoi revocare l'accesso in qualsiasi momento da
+  <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">myaccount.google.com/permissions</a>.</p>
+
+  <h2>Documenti d'identità</h2>
+  <p>Puoi caricare documenti di viaggio (carta d'identità, passaporto). Restano nell'archivio privato di chi li carica,
+  si aprono solo con un permesso temporaneo e non vengono condivisi automaticamente. Se carichi documenti di altre persone,
+  devi averne il permesso. Quando il viaggio è finito, ti consigliamo di cancellarli.</p>
+
+  <h2>Servizi esterni</h2>
+  <p>Per funzionare, TOYO si appoggia a: Supabase (account e dati), Cloudflare (hosting del sito),
+  Google (solo se entri con Google o usi la mappa di Google). Per meteo, cambi, festività, foto delle città e orari dei mezzi
+  il server di TOYO interroga OpenStreetMap, Open-Meteo, BCE/Frankfurter, Nager.Date, Wikimedia e Transitous
+  inviando solo il nome o le coordinate del luogo e le date, mai dati che ti identificano.</p>
+
+  <h2>Cosa non facciamo</h2>
+  <p>Niente pubblicità, niente vendita di dati, niente tracciamento di terze parti, niente cookie di profilazione.</p>
+
+  <h2>I tuoi diritti</h2>
+  <p>Puoi vedere, esportare (Impostazioni → Scarica backup) e cancellare i tuoi dati in qualsiasi momento
+  (Impostazioni → Elimina account: cancella account, dati e allegati). Per tutto il resto, scrivi all'indirizzo sopra.
+  Hai anche diritto di presentare reclamo al Garante per la protezione dei dati personali.</p>
+
+  <p style="margin-top:28px"><a href="/">← Torna a TOYO</a></p>
+</main>
+</body>
+</html>
