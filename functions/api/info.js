@@ -8,9 +8,13 @@
    - festività nazionali che cadono durante il viaggio (Nager.Date).
    Ogni pezzo è facoltativo: se un servizio non risponde, gli altri arrivano lo stesso.
 
-   Tutte le fonti permettono l'uso commerciale (link di affiliazione,
-   abbonamenti): MET Norway e NASA POWER per il meteo, non Open-Meteo, che
-   gratis è solo per uso non commerciale.
+   Due modalità, scelte con la variabile TOYO_USO su Cloudflare:
+   - "personale" (predefinita, TOYO non guadagna): Open-Meteo, più preciso —
+     16 giorni di previsioni con probabilità di pioggia, vento, UV, alba e
+     tramonto; e il clima come media degli stessi giorni negli ultimi 5 anni.
+     Gratis solo per uso non commerciale (niente pubblicità né abbonamenti).
+   - "commerciale" (quando TOYO avrà affiliazioni o abbonamenti): MET Norway
+     e NASA POWER, che permettono l'uso commerciale.
    ========================================================================== */
 import { json, errore, prendi, conCache, isoValida, oggiISO, piuGiorni, giorniTra } from '../../lib/http.js';
 import { PAESI } from '../../lib/paesi.js';
@@ -19,7 +23,8 @@ import { PAESI } from '../../lib/paesi.js';
 const BCE = new Set(['USD','JPY','BGN','CZK','DKK','GBP','HUF','PLN','RON','SEK','CHF','ISK','NOK','TRY','AUD','BRL',
   'CAD','CNY','HKD','IDR','ILS','INR','KRW','MXN','MYR','NZD','PHP','SGD','THB','ZAR']);
 
-export async function onRequestGet({ request, waitUntil }) {
+export async function onRequestGet({ request, waitUntil, env }) {
+  const personale = (env && env.TOYO_USO || 'personale') !== 'commerciale';
   const u = new URL(request.url);
   const lat = Number(u.searchParams.get('lat')), lon = Number(u.searchParams.get('lon'));
   let dal = u.searchParams.get('dal') || '', al = u.searchParams.get('al') || '';
@@ -33,7 +38,7 @@ export async function onRequestGet({ request, waitUntil }) {
 
   const [paese, meteo] = await Promise.all([
     trovaPaese(ctx, la, lo).catch(() => null),
-    dal ? trovaMeteo(ctx, la, lo, dal, al).catch(() => null) : null
+    dal ? (personale ? meteoOpenMeteo(ctx, la, lo, dal, al) : trovaMeteo(ctx, la, lo, dal, al)).catch(() => null) : null
   ]);
 
   const cc = paese && paese.cc;
@@ -46,7 +51,8 @@ export async function onRequestGet({ request, waitUntil }) {
 
   return json({
     paese: scheda, cambio, meteo, festivita,
-    fonti: ['OpenStreetMap (ODbL)', 'MET Norway (CC BY 4.0)', 'NASA POWER', 'BCE via Frankfurter', 'Nager.Date']
+    fonti: ['OpenStreetMap (ODbL)', personale ? 'Open-Meteo.com (CC BY 4.0)' : 'MET Norway (CC BY 4.0) · NASA POWER', 'BCE via Frankfurter', 'Nager.Date'],
+    meteoDa: personale ? 'open-meteo' : 'met-nasa'
   }, 200, 'public, max-age=1800');
 }
 
@@ -127,6 +133,51 @@ async function previsioniMet(la, lo) {
     data: g.data, simbolo: g.simbolo, max: tondo(Math.max(...g.temp)), min: tondo(Math.min(...g.temp)),
     mm: Math.round(g.mm * 10) / 10
   }));
+}
+
+/* ---- Open-Meteo (modalità personale) ---- */
+async function meteoOpenMeteo(ctx, la, lo, dal, al) {
+  const oggi = oggiISO();
+  if (al < oggi) return null;
+  const limite = piuGiorni(oggi, 15);
+  if (dal <= limite) {
+    const da = dal < oggi ? oggi : dal, a = al > limite ? limite : al;
+    return conCache(ctx, `om-prev:${la},${lo}:${da}:${a}:${oggi}:${new Date().getUTCHours() >> 2}`, 3 * 3600, async () => {
+      const j = await prendi(`https://api.open-meteo.com/v1/forecast?latitude=${la}&longitude=${lo}&timezone=auto` +
+        `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,` +
+        `wind_speed_10m_max,uv_index_max,sunrise,sunset&start_date=${da}&end_date=${a}`);
+      const d = j.daily || {};
+      const ora = s => s ? s.slice(11, 16) : null;
+      return { tipo: 'previsione', fonte: 'open-meteo', giorni: (d.time || []).map((t, i) => ({
+        data: t, codice: d.weather_code[i], max: tondo(d.temperature_2m_max[i]), min: tondo(d.temperature_2m_min[i]),
+        pioggia: d.precipitation_probability_max[i], mm: d.precipitation_sum[i] == null ? null : Math.round(d.precipitation_sum[i] * 10) / 10,
+        vento: tondo(d.wind_speed_10m_max[i]), uv: d.uv_index_max[i] == null ? null : Math.round(d.uv_index_max[i]),
+        alba: ora(d.sunrise[i]), tramonto: ora(d.sunset[i])
+      })) };
+    });
+  }
+  // Più in là: media degli stessi giorni negli ultimi 5 anni (rianalisi ERA5).
+  const lun = Math.min(giorniTra(dal, al), 13);
+  const anni = [1, 2, 3, 4, 5].map(n => {
+    const s = (Number(dal.slice(0, 4)) - n) + dal.slice(4);
+    return [s, piuGiorni(s, lun)];
+  });
+  return conCache(ctx, `om-clima:${la},${lo}:${dal.slice(5)}:${lun}:${anni[0][0].slice(0, 4)}`, 30 * 86400, async () => {
+    const serie = await Promise.all(anni.map(([da, a]) => prendi(
+      `https://archive-api.open-meteo.com/v1/archive?latitude=${la}&longitude=${lo}&timezone=auto` +
+      `&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&start_date=${da}&end_date=${a}`, { ms: 9000 })
+      .then(j => j.daily || {}).catch(() => null)));
+    const ok = serie.filter(Boolean);
+    if (!ok.length) return null;
+    const tutti = k => ok.flatMap(d => (d[k] || []).filter(x => x != null));
+    const media = v => v.length ? tondo(v.reduce((s, x) => s + x, 0) / v.length) : null;
+    const max = tutti('temperature_2m_max'), min = tutti('temperature_2m_min');
+    const giorni = lun + 1;
+    const pioggiaPerAnno = ok.map(d => (d.precipitation_sum || []).filter(x => x >= 1).length);
+    return { tipo: 'clima', fonte: 'open-meteo', anni: ok.length, giorni,
+      max: media(max), min: media(min), record: { max: tondo(Math.max(...max)), min: tondo(Math.min(...min)) },
+      giorniPioggia: Math.round(pioggiaPerAnno.reduce((s, x) => s + x, 0) / ok.length) };
+  });
 }
 
 const tondo = x => x == null ? null : Math.round(x);
