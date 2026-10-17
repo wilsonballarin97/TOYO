@@ -133,6 +133,26 @@ Impostazioni, c'è il link al codice sorgente (lo chiede la licenza).
 
 Copyright (C) 2026 wilsonballarin97.
 
+## Accesso con Google
+
+Nell'app c'è "Continua con Google" (file `src/js/36-google.js`, flusso PKCE).
+Al primo accesso si sceglie il nome utente; l'email di Google resta privata.
+Per attivarlo, una volta sola:
+
+1. **Google Cloud Console** → APIs & Services → OAuth consent screen: app
+   esterna, nome "TOYO", email di supporto, dominio `toyo-travel.pages.dev`.
+   Ambiti: solo `openid`, `email`, `profile` (nessuna verifica Google necessaria).
+2. **Credentials → Create credentials → OAuth client ID** → Web application.
+   - Authorized JavaScript origins: `https://toyo-travel.pages.dev`
+   - Authorized redirect URIs: `https://qelakwrbfujneufktfzr.supabase.co/auth/v1/callback`
+3. **Supabase** → Authentication → Sign In / Providers → Google: attiva,
+   incolla Client ID e Client Secret, salva.
+4. **Supabase** → Authentication → URL Configuration:
+   Site URL `https://toyo-travel.pages.dev`, e in Redirect URLs aggiungi
+   `https://toyo-travel.pages.dev/**`.
+
+Il Client Secret si incolla solo su Supabase: non va mai nel codice né su GitHub.
+
 ## Supabase
 
 La chiave nel codice è quella pubblica, è normale che si veda. I dati li
