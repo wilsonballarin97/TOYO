@@ -61,12 +61,14 @@ function viewHub(){
   }
 
   const prossimo = vivi[0];
+  /* ⚠️ L'elenco dei viaggi stava sotto il bilancio e il report di tutti i
+     viaggi, cioè a tre schermate di distanza: chi aveva appena creato un
+     viaggio tornava qui e non lo trovava più. Ora viene subito dopo il
+     prossimo viaggio, e i conti vanno in fondo. */
   return `
   ${cardInviti()}
   ${prossimo ? heroProssimo(prossimo, org) : ''}
-  ${cardBilancio()}
-  ${org ? reportGlobale() : ''}
-  <div class="sec-head">
+  <div class="sec-head" id="iTuoiViaggi">
     <h2>${org ? 'Viaggi che gestisci' : 'I viaggi a cui partecipi'}</h2>
     <span class="sub">${vivi.length ? vivi.length + ' in corso' : 'nessuno in corso'}${arch.length ? ' · ' + arch.length + ' in archivio' : ''}</span>
     <span class="rt">${org
@@ -83,6 +85,9 @@ function viewHub(){
       : 'Nessun viaggio in corso. Quelli conclusi restano in archivio qui sotto.'}</div></div>`}
 
   ${sezioneIdee()}
+
+  ${cardBilancio()}
+  ${org ? reportGlobale() : ''}
 
   ${arch.length ? `
   <div class="sec-head" style="margin-top:8px"><h2>Archivio</h2>

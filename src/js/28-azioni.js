@@ -107,12 +107,17 @@ document.addEventListener('click', e => {
       break;
     }
     case 'fai-entra': {
-      const chi = normNick(val('auChi')), pw = val('auPw');
+      /* Si entra con l'email (account nuovi) o con il nome utente (account
+         creati prima che ci fosse l'email). */
+      const grezzo = val('auChi');
+      const conMail = grezzo.indexOf('@') > 0;
+      const chi = conMail ? grezzo.trim().toLowerCase() : normNick(grezzo), pw = val('auPw');
       /* Meglio dire subito cosa manca che mandare una richiesta destinata a
          tornare indietro con un errore generico. */
-      if(!chi){ erroreAuth('Scrivi il tuo nome utente.'); $('auChi').focus(); return; }
+      if(!chi){ erroreAuth('Scrivi la tua email o il tuo nome utente.'); $('auChi').focus(); return; }
       if(!pw){ erroreAuth('Scrivi la password.'); $('auPw').focus(); return; }
-      if(!nickOk(chi)){
+      if(conMail && !mailOk(chi)){ erroreAuth('Questa email non sembra scritta giusta.'); $('auChi').focus(); return; }
+      if(!conMail && !nickOk(chi)){
         erroreAuth('Quello non è un nome utente valido: da 3 a 20 caratteri fra lettere, numeri, punto e trattino basso.');
         $('auChi').focus(); return;
       }
@@ -331,7 +336,7 @@ document.addEventListener('click', e => {
       else if(V.view === 'bacheca') formPost();
       else if(V.view === 'trip'){
         ({itinerario:()=>formTappa(), prenotazioni:()=>formPren(), persone:()=>formPersona(), soldi:()=>formSpesa(),
-          documenti:()=>formDoc('trip'), dafare:()=>formTodo(), decisioni:()=>formSondaggio(),
+          dafare:()=>formTodo(),
           panoramica:()=>formTodo()}[V.tab] || (()=>formTodo()))();
       }
       break;
@@ -447,7 +452,7 @@ document.addEventListener('click', e => {
       if(!dentroViaggio(dal) || !dentroViaggio(al)){ toast('Quelle date sono fuori dal viaggio'); return; }
       const dati = {nome:dove, dove:dove, tipo:tmpTipoT, gpid:tmpPid,
                     dal, al, ora:($('tOra') ? val('tOra') : ''), note:val('tNote'), lat:tmpLat, lon:tmpLon,
-                    costo:val('tCosto'), pagato:$('tPagato').checked};
+                    costo:val('tCosto')};
       if(a === 'save-tappa') t.tappe.push(Object.assign({id:uid()}, dati));
       else Object.assign(t.tappe.find(x => x.id === V.editId), dati);
       save(); closeModal(); V.tab = 'itinerario'; render();

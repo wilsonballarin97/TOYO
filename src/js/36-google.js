@@ -32,7 +32,7 @@ function bottoneGoogle(){
       <span>Continua con Google</span>
     </button>
     <p class="tiny" style="margin:8px 0 0;text-align:center">Da Google arrivano nome ed email. L'email resta privata: gli altri vedono solo il tuo nome utente.</p>
-    <div class="oppure"><span>oppure con nome utente e password</span></div>`;
+    <div class="oppure"><span>oppure con la tua email</span></div>`;
 }
 
 async function entraConGoogle(){
@@ -76,7 +76,7 @@ function viewSceltaNick(){
       <div class="brand" style="margin-bottom:20px"><div class="brand-mark">◈</div>
         <div class="brand-name" style="display:block">TO<span>YO</span></div></div>
       <h2>Ci sei quasi</h2>
-      <p class="lead">Scegli il nome utente con cui ti trovano gli altri. La tua email di Google resta privata.</p>
+      <p class="lead">Scegli il nome utente con cui ti trovano gli altri. La tua email resta privata.</p>
       <div class="two">
         <div class="field"><label for="gnNome">Nome</label><input class="inp" id="gnNome" value="${esc(nome)}" autocomplete="given-name"></div>
         <div class="field"><label for="gnCogn">Cognome</label><input class="inp" id="gnCogn" value="${esc(cognome)}" autocomplete="family-name"></div>
@@ -85,6 +85,10 @@ function viewSceltaNick(){
         <div class="at"><span>@</span><input class="inp" id="gnNick" value="${esc(nickOk(proposta) ? proposta : '')}" placeholder="marco.rossi"
           autocomplete="username" spellcheck="false" autocapitalize="off"></div>
         <div class="tiny" style="margin-top:6px">Da 3 a 20 caratteri: lettere, numeri, punto e trattino basso.</div></div>
+      ${entratoConMail(utente) ? `
+      <div class="field"><label for="gnPw">Password <span class="opt">(facoltativa, almeno 8 caratteri)</span></label>
+        <input class="inp" type="password" id="gnPw" autocomplete="new-password" placeholder="••••••••">
+        <div class="tiny" style="margin-top:6px">Con una password entri con email e password. Senza, entri ogni volta con un codice via email.</div></div>` : ''}
       <div id="gnErr" class="err hide"></div>
       <button class="btn btn-primary btn-full" data-google-nick="1">Continua</button>
       <p class="tiny" style="margin-top:14px;text-align:center"><button style="font-weight:650;color:var(--ink-3)" data-google-esci="1">Non sono io: esci</button></p>
@@ -98,12 +102,14 @@ async function salvaNickGoogle(btn){
   const dì = t => { err.textContent = t; err.classList.remove('hide'); };
   if(!nome) return dì('Scrivi il tuo nome.');
   if(!nickOk(nick)) return dì('Il nome utente può avere da 3 a 20 caratteri fra lettere, numeri, punto e trattino basso.');
+  const pw = $('gnPw') ? $('gnPw').value : '';
+  if(pw && pw.length < 8) return dì('La password deve avere almeno 8 caratteri (oppure lasciala vuota).');
   btn.disabled = true; btn.textContent = 'Controllo…';
   try{
     /* Il nome utente dev'essere solo tuo: si guarda nella rubrica. */
     const {data: gia} = await sb.from('toyo_profili').select('utente').eq('nick', nick).limit(1);
     if(gia && gia.length && gia[0].utente !== utente.id){ btn.disabled = false; btn.textContent = 'Continua'; return dì('@' + nick + ' è già preso: provane un altro.'); }
-    const {data, error} = await sb.auth.updateUser({data: {nick, nome, cognome}});
+    const {data, error} = await sb.auth.updateUser(pw ? {data: {nick, nome, cognome}, password: pw} : {data: {nick, nome, cognome}});
     if(error) throw error;
     utente = data.user;
     if(DB.profilo){ DB.profilo.nick = nick; if(!DB.profilo.nome || DB.profilo.nome === 'Tu') { DB.profilo.nome = nome; DB.profilo.cognome = cognome; } }

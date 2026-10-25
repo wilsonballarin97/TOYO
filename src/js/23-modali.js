@@ -56,9 +56,10 @@ function formViaggio(t){
       '<div class="field"><label>Dove si va <span class="opt">(facoltativo)</span></label>' +
         '<input class="inp" id="vDove" placeholder="Atene, Naxos, Milos" value="' + esc(t.dove) + '"></div>' +
       '<div class="two">' +
-        '<div class="field"><label>Dal</label><input class="inp" type="date" id="vDal" value="' + esc(t.dal) + '"></div>' +
-        '<div class="field"><label>Al</label><input class="inp" type="date" id="vAl" value="' + esc(t.al) + '"></div>' +
+        '<div class="field"><label>Partenza</label><input class="inp" type="date" id="vDal" min="' + minPartenza(t) + '" value="' + esc(t.dal) + '"></div>' +
+        '<div class="field"><label>Ritorno</label><input class="inp" type="date" id="vAl" min="' + esc(t.dal || minPartenza(t)) + '" value="' + esc(t.al) + '"></div>' +
       '</div>' +
+      '<div class="tiny" style="margin:-4px 0 12px">' + ico('calendario',14) + ' Si parte da oggi in avanti, e il ritorno non può venire prima della partenza.</div>' +
       '<div class="two">' +
         '<div class="field"><label>Quota a persona <span class="opt">(€, facoltativa)</span></label>' +
           '<input class="inp" id="vQuota" inputmode="decimal" placeholder="0" value="' + esc(t.quota) + '"></div>' +
@@ -83,10 +84,33 @@ function formViaggio(t){
   );
   setTimeout(()=>{ const n = $('vNome'); if(n) n.focus(); }, 60);
 }
+/* oggi in formato aaaa-mm-gg, nell'ora di chi usa l'app (toISOString sarebbe UTC:
+   fra mezzanotte e le due "oggi" sarebbe ancora ieri) */
+function oggiIso(){
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+/* Un viaggio nuovo non può partire nel passato. Uno già esistente con la
+   partenza passata (è in corso, o è finito) si può comunque correggere senza
+   che il modulo lo blocchi. */
+function minPartenza(t){
+  const oggi = oggiIso();
+  return (t && t.id && t.dal && t.dal < oggi) ? t.dal : oggi;
+}
 function leggiViaggio(t){
   const nome = val('vNome');
-  if(!nome){ $('vErr').classList.remove('hide'); $('vNome').classList.add('bad'); return null; }
-  t.nome = nome; t.dove = val('vDove'); t.dal = val('vDal'); t.al = val('vAl');
+  const errore = (testo, campo) => {
+    $('vErr').textContent = testo; $('vErr').classList.remove('hide');
+    /* sui campi data niente focus: aprirebbe da solo il calendario */
+    if($(campo)){ $(campo).classList.add('bad'); if($(campo).type !== 'date') $(campo).focus(); }
+    return null;
+  };
+  if(!nome) return errore('Dai un nome al viaggio.', 'vNome');
+  const dal = val('vDal'), al = val('vAl'), min = minPartenza(t);
+  if(dal && dal < min) return errore('La partenza non può essere nel passato: scegli da oggi in avanti.', 'vDal');
+  if(!dal && al && al < oggiIso()) return errore('Il ritorno non può essere nel passato.', 'vAl');
+  if(dal && al && al < dal) return errore('Il ritorno viene prima della partenza: controlla le date.', 'vAl');
+  t.nome = nome; t.dove = val('vDove'); t.dal = dal; t.al = al;
   t.quota = val('vQuota'); t.posti = val('vPosti'); t.note = val('vNote');
   t.tema = tmpTema; t.emoji = tmpEmoji;
   if(typeof t.mio === 'undefined') t.mio = true;
@@ -98,7 +122,8 @@ function leggiViaggio(t){
 let tmpTipoT = 'tappa';
 function formTappa(x){
   const nuovo = !x;
-  x = x || {dove:'', dal:'', al:'', note:'', lat:null, lon:null, tipo:'tappa', gpid:''};
+  x = x || {dove:'', dal:(V.nuovaData || ''), al:'', note:'', lat:null, lon:null, tipo:'tappa', gpid:''};
+  V.nuovaData = '';
   tmpLat = x.lat || null; tmpLon = x.lon || null; tmpPid = x.gpid || ''; tmpTipoT = x.tipo || 'tappa';
   modal(mHead(nuovo ? 'Aggiungi un punto' : 'Modifica punto',
       'Hotel, aeroporto, ristorante, tappa: cercalo e finisce sulla mappa') +
@@ -123,10 +148,8 @@ function formTappa(x){
         '<input class="inp" type="time" id="tOra" value="' + esc(x.ora || '') + '" style="max-width:170px"></div>' +
       notaDate() +
 
-      '<div class="two"><div class="field"><label>Quanto costa <span class="opt">(€, facoltativo)</span></label>' +
-        '<input class="inp" id="tCosto" inputmode="decimal" placeholder="0" value="' + esc(x.costo || '') + '"></div>' +
-      '<div class="field"><label>Stato</label><label class="check" style="padding-top:9px">' +
-        '<input type="checkbox" id="tPagato" ' + (x.pagato ? 'checked' : '') + '> Già pagato</label></div></div>' +
+      '<div class="field"><label>Quanto costa <span class="opt">(€, facoltativo · entra nel report delle spese)</span></label>' +
+        '<input class="inp" id="tCosto" inputmode="decimal" placeholder="0" value="' + esc(x.costo || '') + '" style="max-width:170px"></div>' +
       '<div class="field" style="margin-bottom:0"><label>Note <span class="opt">(orari, codici, numero di stanza…)</span></label>' +
         '<input class="inp" id="tNote" placeholder="Check-in dalle 15, prenotazione QK7T2M" value="' + esc(x.note) + '"></div>' +
       '<div class="err hide" id="tErr">Scrivi almeno dove si trova.</div>' +
@@ -271,7 +294,9 @@ async function salvaDocumento(a, bottone){
       return;
     }
   }
+  if(nuovo && scope === 'trip' && tmpPrenDoc) d.prenId = tmpPrenDoc;
   if(nuovo) contenitore(scope).push(d);
+  if(nuovo) tmpPrenDoc = '';
   tmpFileRaw = null;
   save();
   if(scope === 'mie' || scope.indexOf('p:') === 0){ listaDoc(scope); } else { closeModal(); }
