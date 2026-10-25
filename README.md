@@ -133,6 +133,31 @@ Impostazioni, c'è il link al codice sorgente (lo chiede la licenza).
 
 Copyright (C) 2026 wilsonballarin97.
 
+## Accesso con email e codice
+
+Oltre a Google ci si registra con la propria email (file `src/js/37-email.js`):
+si scrive l'indirizzo, arriva un **codice di 6 cifre**, lo si inserisce e si è
+dentro. Al primo accesso si sceglie il nome utente e, se si vuole, una password
+per entrare la volta dopo con email e password. Lo stesso codice serve per
+entrare quando la password non la si ricorda. Gli account vecchi con nome utente
+e password continuano a funzionare (si entra scrivendo il nome utente).
+
+Da fare una volta sola su **Supabase**:
+
+1. **Authentication → Emails → Templates**: nei modelli *Magic link* e
+   *Confirm signup* mettere il codice al posto del link, per esempio
+   `<h2>Il tuo codice TOYO</h2><p>Scrivi questo codice nell'app: <b>{{ .Token }}</b></p><p>Scade fra un'ora.</p>`
+   (oggetto: `Il tuo codice TOYO`).
+2. **Authentication → Emails → SMTP Settings**: attivare un server di posta
+   proprio. Quello di prova di Supabase scrive **solo agli indirizzi del team
+   del progetto** (e poche volte all'ora): senza SMTP gli altri ricevono
+   l'errore "Email address not authorized". Va bene la casella del dominio
+   (es. Aruba: `smtps.aruba.it`, porta 465) oppure un servizio come Resend o
+   Brevo con il dominio verificato.
+3. **Authentication → Rate Limits**: alzare "emails per hour" a quanto serve.
+4. **Sign In / Providers → Email**: "Confirm email" resta **spento** (serve agli
+   account vecchi con nome utente); l'email la conferma già il codice.
+
 ## Accesso con Google
 
 Nell'app c'è "Continua con Google" (file `src/js/36-google.js`, flusso PKCE).
