@@ -1,0 +1,142 @@
+/* ============ TESTATA DEL VIAGGIO (copertina) ============
+   Foto a tutta scheda, nome grande sopra la foto e il filetto colorato sotto,
+   come la copertina di un sito di viaggio fatto a mano. */
+.tv2{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-card);
+  box-shadow:var(--e1);overflow:hidden;padding:4px}
+.tv2-img{position:relative;height:230px;border-radius:var(--r-img);overflow:hidden;background:var(--surface-2)}
+.tv2-img .scena{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+.tv2-img::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(18,12,8,0) 30%,rgba(18,12,8,.62) 100%)}
+.tv2-tit{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:16px 16px 18px;color:#fff;text-align:center}
+.tv2-kick{font-size:11.5px;font-weight:650;letter-spacing:.06em;text-transform:uppercase;opacity:.92;
+  text-shadow:0 1px 6px rgba(0,0,0,.4)}
+.tv2-tit h1{font-size:28px;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-top:5px;
+  text-transform:uppercase;text-shadow:0 2px 14px rgba(0,0,0,.45)}
+.tv2-bar{display:block;width:min(260px,70%);height:5px;margin:12px auto 0;border-radius:3px;background:var(--terracotta)}
+.tv2 .tv-gg{z-index:3}
+.tv2 .foto-cred{z-index:3}
+@media(max-width:400px){ .tv2-img{height:210px} .tv2-tit h1{font-size:23px} }
+
+/* ============ SEZIONI DEL VIAGGIO (il menu) ============
+   Sei riquadri sempre visibili al posto della striscia che scorreva. */
+.sezioni{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.sz{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:5px;
+  min-height:84px;padding:12px 6px 10px;text-align:center;border-radius:var(--r-btn);
+  background:var(--surface);border:1px solid var(--line);color:var(--ink-2);transition:.14s}
+.sz:hover{border-color:var(--line-strong);background:var(--surface-2)}
+.sz-ic{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--surface-2);color:var(--terracotta)}
+.sz-n{font-size:12px;font-weight:700;line-height:1.2;color:var(--ink)}
+.sz-c{font-size:10.5px;color:var(--ink-3);font-weight:600}
+.sz-b{position:absolute;top:7px;right:7px;min-width:19px;height:19px;padding:0 5px;border-radius:999px;
+  background:var(--terracotta);color:#fff;font-size:10.5px;font-weight:800;display:grid;place-items:center}
+.sz.on{background:var(--terracotta);border-color:var(--terracotta);box-shadow:0 6px 16px -8px rgba(196,82,46,.7)}
+.sz.on .sz-ic{background:rgba(255,255,255,.18);color:#fff}
+.sz.on .sz-n,.sz.on .sz-c{color:#fff}
+.sz.on .sz-b{background:#fff;color:var(--terracotta)}
+@media(max-width:760px){ .sezioni{grid-template-columns:repeat(3,1fr)} }
+
+/* ============ TITOLO DI SEZIONE ============ */
+.sez-tit{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin:6px 0 2px}
+.sez-tx{flex:1;min-width:220px}
+.sez-tit h2{font-size:22px;font-weight:800;letter-spacing:.01em;text-transform:uppercase;line-height:1.15}
+.sez-bar{display:block;width:64px;height:4px;border-radius:2px;background:var(--terracotta);margin-top:8px}
+.sez-sub{font-size:12.5px;color:var(--ink-3);margin-top:8px;line-height:1.5}
+.sez-az{display:flex;gap:8px;flex-wrap:wrap}
+
+.lnk{color:var(--terracotta);font-weight:650;font-size:inherit;text-decoration:none;background:none;border:0;padding:0;cursor:pointer}
+.lnk:hover{text-decoration:underline}
+
+/* ============ PROGRAMMA ============ */
+.giorno-h{align-items:baseline}
+.giorno-h .gn{font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:.02em}
+.giorno-h .gd{font-size:13px;color:var(--ink-2);font-weight:600}
+.giorno-vuoto{font-size:12.5px;color:var(--ink-3);padding:12px 14px;border:1px dashed var(--line-strong);
+  border-radius:var(--r-btn);background:transparent}
+.prog{display:flex;flex-direction:column}
+.prog-r{display:flex;align-items:flex-start;gap:10px;padding:11px 4px;border-bottom:1px solid var(--line);cursor:default}
+.prog-r[data-act]{cursor:pointer}
+.prog-r:last-child{border-bottom:0}
+.prog-r.sel{background:var(--terracotta-soft);border-radius:10px}
+.prog-ora{flex:0 0 42px;font-size:13px;font-weight:800;color:var(--ink);padding-top:6px;text-align:right}
+.prog-ic{flex:0 0 30px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
+  background:var(--terracotta);color:#fff;font-size:12px}
+.prog-ic b{font-weight:800}
+.prog-r.pren .prog-ic{background:var(--surface-2);color:var(--terracotta);border:1px solid var(--line)}
+.prog-r .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;padding-top:3px}
+.prog-r .t{font-size:14px;font-weight:650;line-height:1.3}
+.prog-r .m{font-size:12px;color:var(--ink-3);line-height:1.45}
+.prog-r .pill{flex:0 0 auto;margin-top:4px}
+.prog-r .acts-row{opacity:1}
+.prog-add{display:block;width:100%;text-align:left;padding:10px 4px 2px 56px;font-size:12.5px;font-weight:650;color:var(--terracotta)}
+.giorno .spost{padding-left:56px}
+
+/* ============ PRENOTAZIONI E DOCUMENTI ============ */
+.riep-pren .rp-num{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.riep-pren .rp-num b{display:block;font-size:19px;font-weight:800;letter-spacing:-.03em}
+.riep-pren .rp-num b.ok{color:var(--sage)}
+.riep-pren .rp-num b.due{color:var(--terracotta)}
+.riep-pren .rp-num span{font-size:11.5px;color:var(--ink-3)}
+.rp-piede{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+.rp-piede .lnk{margin-left:auto;font-size:12.5px}
+.pren-rapide{display:flex;gap:7px;flex-wrap:wrap}
+.pren-rapide .chip{font-weight:650}
+.pgruppo{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.pg-h{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;
+  padding:6px 2px 0;color:var(--ink)}
+.pg-h svg{color:var(--terracotta)}
+.pg-n{margin-left:auto;font-size:12.5px;font-weight:700;color:var(--ink-3);text-transform:none;letter-spacing:0}
+.pcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-card);box-shadow:var(--e1);
+  border-left:4px solid var(--blue);overflow:hidden}
+.pcard.st-pagata{border-left-color:var(--sage)}
+.pcard.st-daPren{border-left-color:var(--gold)}
+.pc-top{display:flex;align-items:flex-start;gap:11px;padding:13px 12px 10px 13px}
+.pc-ic{flex:0 0 36px;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;
+  background:var(--terracotta-soft);color:var(--terracotta)}
+.pc-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.pc-tx .t{font-size:15px;font-weight:700;line-height:1.3}
+.pc-tx .m{font-size:12.5px;color:var(--ink-3);line-height:1.45}
+.pc-tx .m b{color:var(--ink);letter-spacing:.04em}
+.pc-az{display:flex;gap:2px;flex:0 0 auto}
+.pc-soldi{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 13px;background:var(--surface-2);
+  border-top:1px solid var(--line)}
+.pc-soldi.sola{justify-content:space-between}
+.pc-costo{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:650;color:var(--ink-3)}
+.pc-eur{display:flex;align-items:center;gap:4px;font-size:14px;color:var(--ink);font-weight:700}
+.pc-eur .inp{width:104px;padding:8px 10px;font-size:15px;font-weight:700;text-align:right}
+.pc-stati{display:flex;gap:5px;flex-wrap:wrap;margin-left:auto}
+.pc-stati .chip{padding:6px 10px;font-size:12px}
+.pc-stati .chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.pcard.st-pagata .pc-stati .chip.on{background:var(--sage);border-color:var(--sage)}
+.pcard.st-daPren .pc-stati .chip.on{background:var(--gold);border-color:var(--gold);color:#2B2420}
+.pc-docs{padding:4px 13px 10px;border-top:1px solid var(--line)}
+.pc-docs .doc{padding-left:0;padding-right:0}
+.pc-allega{display:inline-flex;align-items:center;gap:7px;padding:9px 2px 2px;font-size:12.5px;font-weight:650;color:var(--terracotta)}
+.cerca-pren{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-card);margin-top:6px}
+.cerca-pren > summary{display:flex;align-items:center;gap:9px;padding:14px 15px;cursor:pointer;font-weight:700;font-size:14px;list-style:none}
+.cerca-pren > summary::-webkit-details-marker{display:none}
+.cerca-pren > summary .tiny{margin-left:auto;font-weight:500}
+.cerca-pren > .card{border:0;box-shadow:none;border-top:1px solid var(--line);border-radius:0}
+@media(max-width:400px){
+  .pc-stati{margin-left:0;width:100%}
+  .riep-pren .rp-num b{font-size:16px}
+}
+
+/* ============ IDEE: una scheda sola nella home ============ */
+.idee-una{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:10px;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r-card);box-shadow:var(--e1);transition:.15s}
+.idee-una:hover{border-color:var(--line-strong);transform:translateY(-1px)}
+.iu-foto{flex:0 0 112px;height:92px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:3px;
+  border-radius:var(--r-img);overflow:hidden}
+.iu-foto span{overflow:hidden;background:var(--surface-2)}
+.iu-foto img{width:100%;height:100%;object-fit:cover;display:block}
+.iu-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.iu-k{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--terracotta)}
+.iu-t{font-size:16px;font-weight:800;letter-spacing:-.02em;line-height:1.2}
+.iu-m{font-size:12px;color:var(--ink-3);line-height:1.4}
+.iu-fr{flex:0 0 auto;color:var(--ink-3);padding-right:4px}
+
+/* ============ ACCESSO CON EMAIL ============ */
+.otp{letter-spacing:.5em;font-size:22px;font-weight:800;text-align:center;font-variant-numeric:tabular-nums}
+.au-mail{font-weight:700;color:var(--ink);word-break:break-all}
+.au-link{font-size:12.5px;font-weight:650;color:var(--terracotta)}
+.au-righe{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px}
