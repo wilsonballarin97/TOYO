@@ -59,10 +59,26 @@ function cardIdea(x){
     </div>
   </button>`;
 }
+/* ⚠️ Nella home c'erano otto schede di idee una sotto l'altra: la pagina
+   diventava lunghissima e i propri viaggi si perdevano in mezzo. Ora nella
+   home c'è UNA scheda; un tocco apre la pagina con tutte le idee. */
 function sezioneIdee(){
+  const anteprima = ['lisbona','cicladi','dolomiti','praga'];
   return `
-  <div class="sec-head" style="margin-top:8px"><h2>Idee per il prossimo viaggio</h2>
-    <span class="sub">Otto giri d'Europa collaudati · toccane uno per vedere l'itinerario</span></div>
+  <button class="idee-una" data-act="nav" data-view="idee">
+    <span class="iu-foto">${anteprima.map(id => '<span><img src="foto/idea-' + id + '.jpg" alt="" loading="lazy" decoding="async"></span>').join('')}</span>
+    <span class="iu-tx">
+      <span class="iu-k">Non sai dove andare?</span>
+      <span class="iu-t">Idee per il prossimo viaggio</span>
+      <span class="iu-m">${IDEE.length} giri d'Europa già pronti, con tappe, periodo e budget</span>
+    </span>
+    <span class="iu-fr">${ico('freccia',18)}</span>
+  </button>`;
+}
+function viewIdee(){
+  return `
+  <button class="btn btn-ghost btn-sm" style="align-self:flex-start" data-act="nav" data-view="hub">← Tutti i viaggi</button>
+  ${titSez('Idee per il prossimo viaggio', IDEE.length + ' giri d\'Europa collaudati · toccane uno per vedere l\'itinerario e crearlo con le tappe già dentro')}
   <div class="ideagrid">${IDEE.map(cardIdea).join('')}</div>`;
 }
 function apriIdea(id){

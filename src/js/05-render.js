@@ -72,7 +72,7 @@ async function boot(){
 }
 function render(){
   const org = DB.ruolo === 'organizzatore';
-  V.mostraArch = V.mostraArch || false;
+  if(typeof V.mostraArch !== 'boolean') V.mostraArch = true;
   $('roleIc').innerHTML = ico(org ? 'bussola' : 'valigia', 19);
   $('roleNm').textContent = org ? 'Organizzatore' : 'Viaggiatore';
   const n = viaggiVivi().length;
@@ -118,14 +118,14 @@ function render(){
   const fab = $('fab');
   if(fab) fab.setAttribute('aria-label', V.view === 'trip'
     ? ({itinerario:'Nuova tappa', prenotazioni:'Nuova prenotazione', persone:'Aggiungi persona',
-        soldi:'Nuova spesa', documenti:'Nuovo documento', decisioni:'Nuova domanda'}[V.tab] || 'Nuova cosa da fare')
+        soldi:'Nuova spesa'}[V.tab] || 'Nuova cosa da fare')
     : (V.view === 'docs' ? 'Nuovo documento'
       : (V.view === 'bacheca' ? 'Scrivi un post' : 'Nuovo viaggio')));
 
   /* Cercare e guardare un posto sono figli della bacheca: la linguetta in
      fondo resta accesa su «Bacheca», altrimenti sembra di essere usciti da
      un'altra parte e non si sa piu' da dove si e' arrivati. */
-  const acceso = V.view === 'trip' ? 'hub'
+  const acceso = (V.view === 'trip' || V.view === 'idee') ? 'hub'
     : ((V.view === 'cerca' || V.view === 'luogo') ? 'bacheca' : V.view);
   document.querySelectorAll('#tabbar button').forEach(b =>
     b.classList.toggle('on', b.dataset.view === acceso));
@@ -147,6 +147,7 @@ function render(){
   else if(V.view === 'profilo')           s.innerHTML = viewProfilo();
   else if(V.view === 'impostazioni')      s.innerHTML = viewImpostazioni();
   else if(V.view === 'privacy')           s.innerHTML = viewPrivacy();
+  else if(V.view === 'idee')              s.innerHTML = viewIdee();
   else { V.view = 'hub'; s.innerHTML = viewHub(); }
 
   $('fab').style.display =

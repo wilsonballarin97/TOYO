@@ -6,7 +6,7 @@
 /* ---------------------------------------------------------------- STORE */
 /* Etichetta visibile in fondo alla schermata di accesso e in Impostazioni:
    serve a capire al volo quale copia del file si sta aprendo. */
-const VERSIONE = '27 ago · forme morbide, Figtree, testata del viaggio' + (TOYO_BUILD ? ' · ' + TOYO_BUILD : '');
+const VERSIONE = '25 ott · accesso con email, sezioni del viaggio' + (TOYO_BUILD ? ' · ' + TOYO_BUILD : '');
 const KEY = 'toyo.v1';
 const KEY_VECCHIA = 'triply.v1';   /* i dati creati quando l'app si chiamava TRIPLY */
 let storeOk = true;

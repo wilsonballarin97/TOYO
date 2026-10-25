@@ -1,49 +1,56 @@
 /* ==========================================================================
    VIAGGIO
    ========================================================================== */
+/* Le sezioni del viaggio. Erano otto linguette in una striscia che scorreva
+   di lato: su telefono metà restavano fuori dallo schermo e non si capiva
+   cosa ci fosse. Ora sono sei riquadri sempre visibili, come il menu di un
+   sito: Programma, Prenotazioni e documenti, Spese… (Decisioni è sparita;
+   Prenotazioni e Documenti sono diventate una cosa sola.) */
 const TABS = [
-  {id:'panoramica',   n:'Panoramica'},
-  {id:'itinerario',   n:'Itinerario'},
-  {id:'prenotazioni', n:'Prenotazioni'},
-  {id:'persone',    n:'Persone'},
-  {id:'soldi',      n:'Spese e quote'},
-  {id:'decisioni',  n:'Decisioni'},
-  {id:'documenti',  n:'Documenti'},
-  {id:'dafare',     n:'Da fare'}
+  {id:'panoramica',   n:'Panoramica',               ic:'bussola'},
+  {id:'itinerario',   n:'Programma',                ic:'calendario'},
+  {id:'prenotazioni', n:'Prenotazioni e documenti', ic:'biglietto'},
+  {id:'soldi',        n:'Spese',                    ic:'euro'},
+  {id:'persone',      n:'Persone',                  ic:'persone'},
+  {id:'dafare',       n:'Da fare',                  ic:'spunta'}
 ];
+/* vecchi nomi di sezione (link salvati, stato in memoria) → dove stanno ora */
+const TAB_ALIAS = {documenti:'prenotazioni', decisioni:'panoramica'};
 
 function viewTrip(t){
+  if(TAB_ALIAS[V.tab]) V.tab = TAB_ALIAS[V.tab];
+  if(!TABS.some(x => x.id === V.tab)) V.tab = 'panoramica';
   const s = statoViaggio(t);
   const gg = giorniA(t.dal);
-  const d = durata(t.dal, t.al);
   const body = {
-    panoramica: tabPanoramica, itinerario: tabItinerario, prenotazioni: tabPrenotazioni,
-    persone: tabPersone, soldi: tabSoldi, decisioni: tabDecisioni,
-    documenti: tabDocumenti, dafare: tabDaFare
+    panoramica: tabPanoramica, itinerario: tabItinerario, prenotazioni: tabPrenDoc,
+    persone: tabPersone, soldi: tabSoldi, dafare: tabDaFare
   }[V.tab] || tabPanoramica;
+
+  const nPren = (t.prenotazioni || []).length + (t.docs || []).length;
+  const conta = {
+    itinerario: t.tappe.length ? t.tappe.length + (t.tappe.length === 1 ? ' punto' : ' punti') : '',
+    prenotazioni: nPren ? String(nPren) : '',
+    soldi: s.totSpese ? eur(s.totSpese) : '',
+    persone: t.gente.length ? String(t.gente.length) : '',
+    dafare: ''
+  };
+  const allerta = {dafare: s.todoAperti, prenotazioni: s.prenAperte};
 
   return `
   <button class="btn btn-ghost btn-sm" style="align-self:flex-start" data-act="nav" data-view="hub">← Tutti i viaggi</button>
 
-  <!-- La testata del viaggio, rifatta come la scheda di un soggiorno su
-       Airbnb: immagine in cima, titolo, una riga di contesto, un filetto, e
-       in fondo CHI c'e' insieme a te e l'azione principale.
-       Prima era una fascia scura con dentro quattro numeri e quattro
-       pulsanti tutti uguali: diceva molto e non guidava a niente. Qui il
-       primo sguardo cade sul nome del viaggio, il secondo sulle facce. -->
-  <section class="tviaggio">
-    <div class="tv-img">${scenaViaggio(t.tema, cittaDi(t), true)}
+  <!-- La testata come la copertina di un sito di viaggio: la foto della città
+       a tutta larghezza, il nome grande sopra la foto e il filetto colorato
+       sotto. Poi chi c'è e le due azioni. -->
+  <section class="tv2">
+    <div class="tv2-img">${scenaViaggio(t.tema, cittaDi(t), true)}
       <a class="foto-cred" id="tvCred" target="_blank" rel="noopener" hidden></a>
       ${gg != null && gg >= 0 ? '<span class="tv-gg"><b class="num">' + gg + '</b>' + (gg === 1 ? 'giorno' : 'giorni') + '</span>' : ''}
-    </div>
-    <div class="tv-tx">
-      <h1>${esc(t.emoji)} ${esc(t.nome)}</h1>
-      <div class="tv-meta">${fmtRange(t.dal, t.al)}${t.dove ? ' · ' + esc(t.dove) : ''} · ${t.mio ? 'Organizzi tu' : 'Organizza @' + esc(t.organizzatore || 'chi ti ha invitato')}</div>
-      <div class="tv-num">
-        <span><b class="num">${t.tappe.length}</b> ${t.tappe.length === 1 ? 'punto' : 'punti'}</span>
-        <span><b class="num">${(t.prenotazioni||[]).length}</b> ${(t.prenotazioni||[]).length === 1 ? 'prenotazione' : 'prenotazioni'}</span>
-        ${s.totSpese ? '<span><b class="num">' + eur(s.totSpese) + '</b> di spese</span>' : ''}
-        ${s.todoAperti ? '<span class="urg"><b class="num">' + s.todoAperti + '</b> da fare</span>' : ''}
+      <div class="tv2-tit">
+        <div class="tv2-kick">${t.dove ? esc(t.dove) + ' · ' : ''}${fmtRange(t.dal, t.al)}</div>
+        <h1>${esc(t.emoji)} ${esc(t.nome)}</h1>
+        <span class="tv2-bar"></span>
       </div>
     </div>
     <div class="tv-piede">
@@ -54,16 +61,24 @@ function viewTrip(t){
           ? '<span class="teste">' + teste.map(x =>
               '<span class="testa" style="background:' + coloreDa(x.nome) + '">' + esc(iniz(x.nome, '')) + '</span>').join('') +
             (extra ? '<span class="testa piu">+' + extra + '</span>' : '') + '</span>'
-          : '<span class="tv-soli">Ancora nessuno</span>';
+          : '<span class="tv-soli">' + (t.mio ? 'Organizzi tu' : 'Organizza @' + esc(t.organizzatore || 'chi ti ha invitato')) + '</span>';
       })()}
       <span class="tv-az">
         ${posso(t)
-          ? '<button class="btn btn-ghost btn-sm" data-act="edit-trip" data-id="' + esc(t.id) + '">Modifica</button>' +
+          ? '<button class="btn btn-ghost btn-sm" data-act="edit-trip" data-id="' + esc(t.id) + '">' + ico('matita',15) + '<span>Modifica</span></button>' +
             '<button class="btn btn-primary btn-sm" data-act="invita">' + ico('personaPiu',16) + '<span>Invita</span></button>'
-          : '<button class="btn btn-primary btn-sm" data-act="tab" data-tab="documenti">' + ico('tessera',16) + '<span>I tuoi documenti</span></button>'}
+          : '<button class="btn btn-primary btn-sm" data-act="tab" data-tab="prenotazioni">' + ico('tessera',16) + '<span>I tuoi documenti</span></button>'}
       </span>
     </div>
   </section>
+
+  <nav class="sezioni" id="sezioni" aria-label="Sezioni del viaggio">
+    ${TABS.map(x => `<button class="sz ${V.tab === x.id ? 'on' : ''}" data-act="tab" data-tab="${esc(x.id)}" ${V.tab === x.id ? 'aria-current="page"' : ''}>
+      <span class="sz-ic">${ico(x.ic, 19)}</span>
+      <span class="sz-n">${x.n}</span>
+      ${allerta[x.id] ? '<span class="sz-b">' + allerta[x.id] + '</span>' : (conta[x.id] ? '<span class="sz-c num">' + conta[x.id] + '</span>' : '')}
+    </button>`).join('')}
+  </nav>
 
   ${!posso(t) ? `
   <div class="card" style="border-left:3px solid var(--blue)">
@@ -73,13 +88,12 @@ function viewTrip(t){
         <div style="font-weight:650;font-size:13.5px">Stai guardando un viaggio organizzato da altri</div>
         <div style="font-size:12px;color:var(--ink-3)">Puoi consultare tutto. Quello che gestisci tu: i tuoi documenti e la tua quota.</div>
       </div>
-      <button class="btn btn-ghost btn-sm" data-act="tab" data-tab="documenti">I tuoi documenti</button>
     </div>
   </div>` : ''}
   ${archiviato(t) ? `
   <div class="card" style="border-left:3px solid var(--ink-3)">
     <div class="card-b" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:13px 15px">
-      <span style="font-size:19px"><svg class="ico" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 7.6L12 3.4l8.5 4.2v8.8L12 20.6l-8.5-4.2z"/><path d="M3.5 7.6L12 11.8l8.5-4.2M12 11.8v8.8"/></svg></span>
+      <span>${ico('archivio',19)}</span>
       <div style="flex:1;min-width:200px">
         <div style="font-weight:650;font-size:13.5px">Viaggio in archivio</div>
         <div style="font-size:12px;color:var(--ink-3)">${t.al && giorniA(t.al) < 0 ? 'Archiviato da solo perché è finito il ' + fmtDate(t.al) + '.' : 'L\'hai messo da parte tu.'} Resta tutto consultabile.</div>
@@ -88,13 +102,16 @@ function viewTrip(t){
     </div>
   </div>` : ''}
 
-  <div class="tabs">
-    ${TABS.map(x => `<button class="${V.tab === x.id ? 'on' : ''}" data-act="tab" data-tab="${esc(x.id)}">${x.n}${
-      x.id === 'dafare' && s.todoAperti ? '<span class="b">' + s.todoAperti + '</span>' : ''}${
-      x.id === 'prenotazioni' && s.prenAperte ? '<span class="b">' + s.prenAperte + '</span>' : ''}</button>`).join('')}
-  </div>
-
   ${body(t, s)}`;
+}
+
+/* Titolo di sezione alla maniera di un sito di viaggio: maiuscolo, grande,
+   con il filetto colorato sotto. */
+function titSez(titolo, sub, azioni){
+  return `<div class="sez-tit">
+    <div class="sez-tx"><h2>${titolo}</h2><span class="sez-bar"></span>${sub ? '<div class="sez-sub">' + sub + '</div>' : ''}</div>
+    ${azioni ? '<div class="sez-az">' + azioni + '</div>' : ''}
+  </div>`;
 }
 
 /* ---------- PANORAMICA ---------- */
@@ -118,7 +135,7 @@ function tabPanoramica(t, s){
       </div>
 
       <div class="card">
-        <div class="card-h"><div><h3>Itinerario</h3><div class="sub">${t.tappe.length ? t.tappe.length + (t.tappe.length===1?' punto':' punti') : 'Ancora nessun punto'}</div></div>
+        <div class="card-h"><div><h3>Programma</h3><div class="sub">${t.tappe.length ? t.tappe.length + (t.tappe.length===1?' punto':' punti') : 'Ancora nessun punto'}</div></div>
           ${posso(t) ? '<div class="rt"><button class="btn btn-ghost btn-sm" data-act="new-tappa">＋ Punto</button></div>' : ''}</div>
         ${prossime.length ? `<div class="card-b"><div class="tl">${prossime.map((x,i) => {
           const tp = tipoTappa(x.tipo);
@@ -160,7 +177,7 @@ function tabPanoramica(t, s){
 
       <div class="card">
         <div class="card-h"><div><h3>Documenti del viaggio</h3><div class="sub">${t.docs.length ? t.docs.length + ' allegati' : 'Nessun allegato'}</div></div>
-          <div class="rt"><button class="btn btn-ghost btn-sm" data-act="tab" data-tab="documenti">Apri</button></div></div>
+          <div class="rt"><button class="btn btn-ghost btn-sm" data-act="tab" data-tab="prenotazioni">Apri</button></div></div>
         ${t.docs.length ? '<div class="card-b tight">' + t.docs.slice(0,3).map(d => rigaDoc(d, 'trip')).join('') + '</div>'
           : vuoto('graffetta','Nessun allegato','Biglietti, prenotazioni, polizze: tienili qui, li ritrovi anche offline.')}
       </div>
@@ -275,63 +292,124 @@ function ottimizzaGiorno(t, data){
   });
   return giro.length;
 }
+/* Il programma giorno per giorno, come la pagina "Programma di viaggio" di un
+   sito fatto a mano: ogni giornata ha il suo titolo, dentro ci sono le tappe
+   e anche le prenotazioni di quel giorno (il volo delle 16.50, il check-in),
+   in ordine di orario. Le giornate ancora vuote si vedono lo stesso, con il
+   pulsante per riempirle. */
+const GIORNI_SETT = ['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'];
+const MESI_LUNGHI = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+function fmtGiorno(iso){
+  const d = new Date(iso + 'T12:00:00'); if(isNaN(d)) return '';
+  return GIORNI_SETT[d.getDay()] + ' ' + d.getDate() + ' ' + MESI_LUNGHI[d.getMonth()];
+}
+function giorniProgramma(t){
+  const gruppi = tappePerGiorno(t).map(g => Object.assign({}, g, {pren:[]}));
+  (t.prenotazioni || []).forEach(p => {
+    if(!p.dal) return;
+    let g = gruppi.find(y => y.data === p.dal);
+    if(!g){ g = {data:p.dal, lista:[], pren:[]}; gruppi.push(g); }
+    g.pren.push(p);
+  });
+  const nGiorni = durata(t.dal, t.al);
+  if(nGiorni && nGiorni <= 45){
+    for(let i = 0; i < nGiorni; i++){
+      const d = new Date(new Date(t.dal + 'T12:00:00').getTime() + i * 86400000).toISOString().slice(0,10);
+      if(!gruppi.some(y => y.data === d)) gruppi.push({data:d, lista:[], pren:[]});
+    }
+  }
+  gruppi.sort((a,b) => (a.data || '9999') < (b.data || '9999') ? -1 : 1);
+  gruppi.forEach(g => {
+    g.n = null;
+    if(g.data && t.dal){
+      const n = Math.round((new Date(g.data + 'T12:00:00') - new Date(t.dal + 'T12:00:00')) / 86400000) + 1;
+      if(n >= 1) g.n = n;
+    }
+  });
+  return gruppi;
+}
+
 function tabItinerario(t){
-  const gruppi = tappePerGiorno(t);
+  const gruppi = giorniProgramma(t);
   const punti = puntiDi(t);
   const sel = puntoScelto(t);
   const offline = (typeof navigator.onLine === 'boolean') && !navigator.onLine;
 
   const rigaTappa = (x) => {
     const tp = tipoTappa(x.tipo);
-    const np = prenDiTappa(t, x).length, na = attivitaDiTappa(t, x).length;
     const n = punti.findIndex(pp => pp.id === x.id);
     const attivo = sel && sel.id === x.id;
     return `
-      <div class="row ${attivo ? 'sel' : ''}" ${x.lat ? 'data-act="punto-sel" data-id="' + esc(x.id) + '" style="cursor:pointer"' : ''}>
-        <span class="ic" style="background:${x.lat ? tp.c : 'var(--surface-2)'};border-color:${x.lat ? tp.c : 'var(--line)'};color:${x.lat ? '#fff' : 'var(--ink-3)'};font-weight:700">${x.lat ? (n + 1) : tp.ic}</span>
-        <span class="tx"><span class="t">${x.ora ? '<b class="num" style="margin-right:7px">' + esc(x.ora) + '</b>' : ''}${esc(x.dove || x.nome)}</span>
-          <span class="m">${tp.n}${x.al && x.al !== x.dal ? ' · fino al ' + fmtDate(x.al) : ''}${
-            np ? ' · ' + np + (np === 1 ? ' prenotazione' : ' prenotazioni') : ''}${na ? ' · ' + na + ' attività' : ''}</span></span>
-        <span class="rt">
-          ${num(x.costo) ? '<span class="v num" style="color:' + (x.pagato ? 'var(--chart-ok)' : 'var(--ink)') + '">' + eur(x.costo) + '</span>' : ''}
-          ${posso(t) ? `<span class="acts-row">
-            <button class="ibtn" data-act="edit-tappa" data-id="${esc(x.id)}" title="Modifica" aria-label="Modifica">${ico('matita',16)}</button>
-            <button class="ibtn del" data-act="del-tappa" data-id="${esc(x.id)}" title="Elimina" aria-label="Elimina">${ico('cestino',16)}</button>
-          </span>` : ''}
-        </span>
+      <div class="prog-r ${attivo ? 'sel' : ''}" ${x.lat ? 'data-act="punto-sel" data-id="' + esc(x.id) + '"' : ''}>
+        <span class="prog-ora num">${x.ora ? esc(x.ora) : ''}</span>
+        <span class="prog-ic">${x.lat && n >= 0 ? '<b>' + (n + 1) + '</b>' : tp.ic}</span>
+        <span class="tx"><span class="t">${esc(x.dove || x.nome)}</span>
+          <span class="m">${tp.n}${x.al && x.al !== x.dal ? ' · fino al ' + fmtDate(x.al) : ''}${x.note ? ' · ' + esc(x.note) : ''}${
+            num(x.costo) ? ' · ' + eur(x.costo) : ''}${x.lat ? ' · <a href="' + gmDir(x) + '" target="_blank" rel="noopener" class="lnk">indicazioni</a>' : ''}</span></span>
+        ${posso(t) ? `<span class="acts-row">
+          <button class="ibtn" data-act="edit-tappa" data-id="${esc(x.id)}" title="Modifica" aria-label="Modifica">${ico('matita',16)}</button>
+          <button class="ibtn del" data-act="del-tappa" data-id="${esc(x.id)}" title="Elimina" aria-label="Elimina">${ico('cestino',16)}</button>
+        </span>` : ''}
+      </div>`;
+  };
+  const rigaPrenProg = (x) => {
+    const tp = tipoPren(x.tipo);
+    const st = STATI_PREN[x.stato] || STATI_PREN.pren;
+    return `
+      <div class="prog-r pren" ${posso(t) ? 'data-act="edit-pren" data-id="' + esc(x.id) + '"' : 'data-act="tab" data-tab="prenotazioni"'}>
+        <span class="prog-ora num">${x.ora ? esc(x.ora) : ''}</span>
+        <span class="prog-ic">${tp.ic}</span>
+        <span class="tx"><span class="t">${esc(x.titolo || tp.n)}</span>
+          <span class="m">${tp.n}${x.fornitore ? ' · ' + esc(x.fornitore) : ''}${x.codice ? ' · cod. ' + esc(x.codice) : ''}</span></span>
+        <span class="pill ${st[0]}">${st[1]}</span>
       </div>`;
   };
 
   const bloccoGiorno = (g) => {
+    /* tappe e prenotazioni in fila per orario; se le tappe sono state messe
+       in ordine a mano ("Ottimizza"), quell'ordine si rispetta */
+    const aMano = g.lista.some(x => x.ord != null);
+    let voci = g.lista.map((x, i) => ({k: x.ora || '', i, x, pren:false}));
+    const vp = g.pren.slice().sort((a,b) => (a.ora || '99') < (b.ora || '99') ? -1 : 1).map((x, i) => ({k: x.ora || '', i, x, pren:true}));
+    if(aMano) voci = vp.concat(voci);
+    else voci = voci.concat(vp).sort((a,b) => {
+      const ka = a.k || '99:99', kb2 = b.k || '99:99';
+      return ka < kb2 ? -1 : (ka > kb2 ? 1 : (a.pren === b.pren ? a.i - b.i : (a.pren ? -1 : 1)));
+    });
     const righe = [];
-    g.lista.forEach((x, i) => {
-      righe.push(rigaTappa(x));
-      const sp = i < g.lista.length - 1 ? spostamento(x, g.lista[i+1]) : null;
+    voci.forEach((v, i) => {
+      righe.push(v.pren ? rigaPrenProg(v.x) : rigaTappa(v.x));
+      const dopo = voci[i+1];
+      const sp = (!v.pren && dopo && !dopo.pren) ? spostamento(v.x, dopo.x) : null;
       if(sp) righe.push(`<div class="spost">${ico(sp.ico,13)}<span>${sp.tempo} ${sp.come} · ${sp.dist}</span>` +
-        `<span class="spost-l">${tratta(x, g.lista[i+1])}${linkOrari(x, g.lista[i+1])}</span></div>`);
+        `<span class="spost-l">${tratta(v.x, dopo.x)}${linkOrari(v.x, dopo.x)}</span></div>`);
     });
     const ottimizzabile = posso(t) && g.data && g.lista.filter(x => x.lat && x.lon).length >= 3;
+    const vuota = !voci.length;
     return `
-      <div class="giorno">
+      <div class="giorno ${vuota ? 'vuoto' : ''}">
         <div class="giorno-h">
           <span class="gn">${g.data ? (g.n ? 'Giorno ' + g.n : fmtDate(g.data)) : 'Senza data'}</span>
-          <span class="gd">${g.data ? fmtDate(g.data) : 'Da mettere in calendario'} · ${g.lista.length} ${g.lista.length === 1 ? 'punto' : 'punti'}</span>
+          <span class="gd">${g.data ? fmtGiorno(g.data) : 'Da mettere in calendario'}</span>
           ${ottimizzabile ? `<button class="btn btn-ghost btn-sm" data-act="ott-giorno" data-v="${esc(g.data)}">${ico('mappa',14)} Ottimizza</button>` : ''}
         </div>
-        <div class="card"><div class="card-b tight"><div class="rows">${righe.join('')}</div></div></div>
+        ${vuota
+          ? `<div class="giorno-vuoto">Giornata libera${posso(t) ? ' · <button class="lnk" data-act="new-tappa" data-v="' + esc(g.data) + '">＋ aggiungi qualcosa</button>' : ''}</div>`
+          : `<div class="card"><div class="card-b tight"><div class="prog">${righe.join('')}</div>
+              ${posso(t) && g.data ? '<button class="prog-add" data-act="new-tappa" data-v="' + esc(g.data) + '">＋ Aggiungi a questo giorno</button>' : ''}</div></div>`}
       </div>`;
   };
 
   return `
+  ${titSez('Programma di viaggio',
+    t.dal ? fmtRange(t.dal, t.al) + (durata(t.dal, t.al) ? ' · ' + durata(t.dal, t.al) + ' giorni' : '') + ' · tocca una tappa per vederla sulla mappa' : 'Giorno per giorno, con orari e spostamenti',
+    posso(t) ? '<button class="btn btn-primary btn-sm" data-act="new-tappa">＋ Tappa</button>' : '')}
   <div class="split-it">
     <div class="col">
-      <div class="sec-head" style="margin-top:0"><h2>Le tappe</h2><span class="sub">Giorno per giorno · tocca per vederle sulla mappa</span>
-        ${posso(t) ? '<span class="rt"><button class="btn btn-primary btn-sm" data-act="new-tappa">＋ Punto</button></span>' : ''}</div>
       ${gruppi.length ? gruppi.map(bloccoGiorno).join('')
         : `<div class="card">${posso(t) ? vuoto('luogo','Nessun punto ancora',"Aggiungi il primo: l'hotel, l'aeroporto di arrivo, la città.")
             : '<div class="card-b">Chi organizza non ha ancora aggiunto le tappe.</div>'}</div>`}
     </div>
-
 
     <div class="col col-side">
       <div class="card mapcard">
@@ -384,8 +462,7 @@ function schedaTappa(t, sel){
       ${(sel.note || costo) ? `<div class="rows" style="margin-bottom:${(pren.length || att.length) ? '12px' : '0'}">
         ${sel.note ? '<div class="row" style="padding:8px 2px"><span class="tx"><span class="m" style="font-size:12.5px;color:var(--ink-2)">' + esc(sel.note) + '</span></span></div>' : ''}
         ${costo ? '<div class="row" style="padding:8px 2px"><span class="tx"><span class="t" style="font-weight:500;color:var(--ink-3);font-size:12.5px">Costo del punto</span></span>' +
-          '<span class="rt"><span class="v num" style="color:' + ((orig && orig.pagato) ? 'var(--chart-ok)' : 'var(--ink)') + '">' + eur(costo) +
-          '</span><span class="k">' + ((orig && orig.pagato) ? 'pagato' : 'da pagare') + '</span></span></div>' : ''}
+          '<span class="rt"><span class="v num">' + eur(costo) + '</span></span></div>' : ''}
       </div>` : ''}
 
       <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:8px">
@@ -492,71 +569,11 @@ function linkPrenota(t){
   </div>`;
 }
 
-function tabPrenotazioni(t){
-
-  const lista = (t.prenotazioni || []).slice().sort((a,b) => (a.dal||'9999') < (b.dal||'9999') ? -1 : 1);
-  const tot = lista.reduce((n,x) => n + num(x.costo), 0);
-  const pagate = lista.filter(x => x.stato === 'pagata').reduce((n,x) => n + num(x.costo), 0);
-  const daFare = lista.filter(x => x.stato === 'daPren').length;
-  const suMappa = lista.filter(x => x.lat && x.lon).length;
-
-  return `
-  <div class="sec-head"><h2>Prenotazioni</h2>
-    <span class="sub">${lista.length ? lista.length + (lista.length === 1 ? ' prenotazione' : ' prenotazioni') +
-      ' · ' + eur(tot) + (suMappa ? ' · ' + suMappa + ' sulla mappa' : '') : 'Voli, treni, alloggi, auto: tutto quello che hai bloccato'}</span>
-    ${posso(t) ? '<span class="rt"><button class="btn btn-primary btn-sm" data-act="new-pren">＋ Nuova prenotazione</button></span>' : ''}</div>
-
-  ${linkPrenota(t)}
-
-  ${lista.length ? `
-  <div class="card">
-    <div class="card-b" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-      <div><div style="font-size:20px;font-weight:700;letter-spacing:-.03em" class="num">${eur(tot)}</div>
-        <div style="font-size:11.5px;color:var(--ink-3)">totale prenotato</div></div>
-      <div class="vdiv" style="background:var(--line);height:30px"></div>
-      <div><div style="font-size:20px;font-weight:700;letter-spacing:-.03em;color:var(--chart-ok)" class="num">${eur(pagate)}</div>
-        <div style="font-size:11.5px;color:var(--ink-3)">già pagato</div></div>
-      <div class="vdiv" style="background:var(--line);height:30px"></div>
-      <div><div style="font-size:20px;font-weight:700;letter-spacing:-.03em;color:var(--terracotta)" class="num">${eur(tot - pagate)}</div>
-        <div style="font-size:11.5px;color:var(--ink-3)">ancora da pagare</div></div>
-      ${daFare ? '<span class="pill warn" style="margin-left:auto">' + daFare + (daFare === 1 ? ' ancora da prenotare' : ' ancora da prenotare') + '</span>' : '<span class="pill ok" style="margin-left:auto">tutto prenotato</span>'}
-    </div>
-  </div>` : ''}
-
-  <div class="card">
-    ${lista.length ? '<div class="card-b tight"><div class="rows">' + lista.map(x => {
-      const tp = tipoPren(x.tipo);
-      const st = STATI_PREN[x.stato] || STATI_PREN.pren;
-      return `
-      <div class="row">
-        <span class="ic" style="background:${tp.c};border-color:${tp.c};color:#fff">${tp.ic}</span>
-        <span class="tx"><span class="t">${esc(x.titolo || tp.n)}</span>
-          <span class="m">${tp.n}${x.fornitore ? ' · ' + esc(x.fornitore) : ''}${
-            x.dal ? ' · ' + fmtRange(x.dal, x.al || x.dal) : ''}${x.ora ? ' ore ' + esc(x.ora) : ''}${
-            x.codice ? ' · cod. ' + esc(x.codice) : ''}${x.dove ? ' · ' + ico('luogo',15) + '' + esc(x.dove) : ''}</span></span>
-        <span class="rt">
-          ${num(x.costo) ? '<span class="v num">' + eur(x.costo) + '</span>' : ''}
-          <span class="pill ${st[0]}">${st[1]}</span>
-          ${x.lat ? '<a class="docbtn" href="' + gmDir(x) + '" target="_blank" rel="noopener" title="Indicazioni" aria-label="Indicazioni">' + ico('bussola',16) + '</a>' : ''}
-          ${posso(t) ? `<span class="acts-row">
-            <button class="ibtn" data-act="edit-pren" data-id="${esc(x.id)}" title="Modifica" aria-label="Modifica">${ico('matita',16)}</button>
-            <button class="ibtn del" data-act="del-pren" data-id="${esc(x.id)}" title="Elimina" aria-label="Elimina">${ico('cestino',16)}</button>
-          </span>` : ''}</span>
-      </div>`;
-    }).join('') + '</div></div>'
-    : `<div class="card-b" style="text-align:center;padding:26px 16px">
-        <div style="font-size:13px;color:var(--ink-3);max-width:420px;margin:0 auto 14px">
-          Aggiungi il volo, l'hotel, il treno o l'auto a noleggio: ognuna con codice, orario e costo.
-          Se metti anche il luogo, finisce sulla mappa dell'itinerario insieme alle tappe.</div>
-        <button class="btn btn-primary btn-sm" data-act="new-pren">＋ Aggiungi la prima</button>
-       </div>`}
-  </div>`;
-}
-
 function formPren(x){
   const nuovo = !x;
-  x = x || {tipo:'alloggio', titolo:'', fornitore:'', codice:'', dal:'', al:'', ora:'',
+  x = x || {tipo:(V.nuovoTipo || 'alloggio'), titolo:'', fornitore:'', codice:'', dal:'', al:'', ora:'',
             dove:'', lat:null, lon:null, gpid:'', costo:'', stato:'pren', note:''};
+  V.nuovoTipo = '';
   tmpLat = x.lat || null; tmpLon = x.lon || null; tmpPid = x.gpid || ''; tmpTipoP = x.tipo || 'alloggio';
   modal(mHead(nuovo ? 'Nuova prenotazione' : 'Modifica prenotazione',
       'Volo, treno, alloggio, auto: con codice, costo e luogo') +

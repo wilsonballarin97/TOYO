@@ -245,6 +245,7 @@ function viewImpostazioni(){
         <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:12px">
           <button class="btn btn-ghost btn-sm" data-act="esci-account">Esci dall'account</button>
           ${eNick(utente.email) ? `<button class="btn btn-ghost btn-sm" data-act="cambia-pw">${ico('chiave',16)}<span>Cambia password</span></button>`
+            : entratoConMail(utente) ? `<button class="btn btn-ghost btn-sm" data-act="imposta-pw">${ico('chiave',16)}<span>Imposta o cambia password</span></button>`
             : '<span class="tiny">Entri con Google: la password la gestisce Google.</span>'}
           ${cloudCfg && cloudCfg.dalFile ? '' : '<button class="btn btn-ghost btn-sm" data-act="togli-cloud">Stacca questo dispositivo</button>'}
           <button class="btn btn-ghost btn-sm" data-act="diagnosi">${ico('lente',16)}<span>Verifica collegamento</span></button>
@@ -425,34 +426,15 @@ function viewAuth(){
       ${bottoneGoogle()}
 
       ${authTab === 'registra' ? `
-        <h2>Crea il tuo account</h2>
-        <p class="lead">Nome, cognome e il nome utente con cui entri. Niente email.</p>
-
-        <div class="two">
-          <div class="field"><label>Nome</label><input class="inp" id="auNome" placeholder="Marco" autocomplete="given-name"></div>
-          <div class="field"><label>Cognome</label><input class="inp" id="auCognome" placeholder="Rossi" autocomplete="family-name"></div>
-        </div>
-        <div class="field"><label>Nome utente <span class="opt">(è come ti trovano gli altri)</span></label>
-          <div class="at"><span>@</span><input class="inp" id="auNick" placeholder="marco.rossi" autocomplete="username" spellcheck="false" autocapitalize="off"></div>
-          <div class="tiny" style="margin-top:6px">Da 3 a 20 caratteri: lettere, numeri, punto e trattino basso. Niente spazi.</div></div>
-        <div class="field"><label>Password <span class="opt">(almeno 8 caratteri)</span></label>
-          <div class="pw-wrap">
-            <input class="inp" type="password" id="auPw" placeholder="••••••••" autocomplete="new-password" enterkeyhint="go">
-            <button type="button" class="pw-occhio" data-act="mostra-pw" data-v="auPw" aria-label="Mostra la password"><svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12s3.6-6 9.5-6 9.5 6 9.5 6-3.6 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.8"/></svg></button>
-          </div>
-          <div class="forza" id="pwForza"><i></i><span></span></div>
-          <div class="tiny hide" id="capsAvviso">Il BLOC MAIUSC è acceso.</div></div>
-        <div class="err hide" id="auErr"></div>
-        <button class="btn btn-primary btn-full" data-act="fai-registra">Crea account</button>
-        <p class="tiny" style="margin-top:10px">Nessuna email, nessuna conferma da aprire: entri subito.
-          In cambio la password non si può rimandare a nessuno &mdash; <b>segnatela</b>.</p>
+        ${formAccessoEmail('registra')}
       ` : `
         <h2>Bentornato</h2>
         <p class="lead">Entra e ritrovi i tuoi viaggi come li hai lasciati.</p>
-        <div class="field"><label>Nome utente</label>
-          <div class="at"><span>@</span><input class="inp" id="auChi" placeholder="marco.rossi" autocomplete="username"
-            spellcheck="false" autocapitalize="off" autocorrect="off" inputmode="text" enterkeyhint="next"
-            value="${esc(ultimoNick())}"></div></div>
+        ${accessoCodice ? formAccessoEmail('entra') : `
+        <div class="field"><label>Email o nome utente</label>
+          <input class="inp" id="auChi" placeholder="tu@email.it oppure marco.rossi" autocomplete="username"
+            spellcheck="false" autocapitalize="off" autocorrect="off" inputmode="email" enterkeyhint="next"
+            value="${esc(ultimoNick())}"></div>
         <div class="field"><label>Password</label>
           <div class="pw-wrap">
             <input class="inp" type="password" id="auPw" placeholder="••••••••" autocomplete="current-password" enterkeyhint="go">
@@ -462,6 +444,8 @@ function viewAuth(){
         <div style="display:flex;margin:-4px 0 14px"><button style="margin-left:auto;font-size:12.5px;font-weight:650;color:var(--terracotta)" data-act="fai-recupera">Password dimenticata?</button></div>
         <div class="err hide" id="auErr"></div>
         <button class="btn btn-primary btn-full" data-act="fai-entra">Entra</button>
+        <button class="btn btn-ghost btn-full" style="margin-top:10px" data-mail="vai-codice">${ico('busta',16)}<span>Entra con un codice via email</span></button>
+        `}
       `}
 
       <div style="margin-top:22px;padding-top:16px;border-top:1px solid var(--line)">
@@ -561,7 +545,7 @@ const testoErrore = (e, modo) => {
     return 'Il server non risponde. Può essere la tua connessione, oppure il progetto Supabase in pausa: sul piano gratuito si addormenta dopo una settimana senza visite e ci mette un minuto a risvegliarsi. Riprova fra poco.';
 
   if(/Invalid login/i.test(m))
-    return 'Nome utente o password non corretti. Attenzione al BLOC MAIUSC.';
+    return 'Email/nome utente o password non corretti. Attenzione al BLOC MAIUSC. Se ti sei registrato con l\'email e non hai mai scelto una password, entra con il codice via email.';
   if(/already registered|already exists|duplicate key/i.test(m))
     return 'Questo nome utente è già preso: provane un altro.';
   if(/Email address.*invalid|is invalid/i.test(m))

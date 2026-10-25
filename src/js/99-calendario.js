@@ -5,7 +5,10 @@
   function parse(v){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v||'');return m?new Date(+m[1],+m[2]-1,+m[3]):null;}
   function open(input){
     var min=parse(input.min), max=parse(input.max), sel=parse(input.value);
-    var cur=new Date((sel||min||new Date()).getTime()); cur.setDate(1);
+    /* una data già scritta ma fuori dai limiti (es. nel passato) non deve aprire
+       il calendario su un mese tutto spento: si parte dal primo giorno valido */
+    var base=(sel&&!(min&&sel<min)&&!(max&&sel>max))?sel:(min||new Date());
+    var cur=new Date(base.getTime()); cur.setDate(1);
     var ov=document.createElement('div'); ov.className='cal-ov';
     ov.innerHTML='<div class="cal-card" role="dialog" aria-label="Scegli una data">'+
       '<div class="cal-head"><div class="cal-title"></div><div class="cal-nav">'+

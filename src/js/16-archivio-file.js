@@ -82,7 +82,10 @@ const eNick = e => String(e || '').toLowerCase().endsWith('@' + DOM_NICK);
 /* Si entra SOLO col nome utente. Accettare anche un'email significherebbe che
    da qualche parte l'abbiamo chiesta — e qui non la chiediamo mai a nessuno.
    La chiocciola iniziale, se la scrivi, viene tolta da normNick. */
-const identita = v => indirizzoDi(v);
+const identita = v => {
+  const s = String(v || '').trim().toLowerCase();
+  return (s.indexOf('@') > 0 && !eNick(s)) ? s : indirizzoDi(s);
+};
 /* Come si chiama chi è entrato: nome utente se ce l'ha, altrimenti l'email. */
 function nickDi(u){
   const m = (u && u.user_metadata) || {};
@@ -204,6 +207,14 @@ function chiediQualiDati(remoto){
 /* Senza email non esiste un link da rimandare: meglio dirlo chiaro invece di
    far cercare una funzione che non c'è. */
 function spiegaPassword(){
+  /* Chi si è registrato con l'email non ha bisogno di niente: entra col codice. */
+  const scritto = val('auChi');
+  if(scritto.indexOf('@') > 0 || !scritto){
+    accessoCodice = true; mailPasso = 'mail'; if(scritto) mailIndirizzo = scritto.trim().toLowerCase();
+    ridisegnaAuth();
+    toast('Ti mandiamo un codice: poi dalle Impostazioni puoi rifare la password');
+    return;
+  }
   modal(mHead('Password dimenticata', 'Come funziona qui') +
     '<div class="modal-b"><div style="font-size:13px;line-height:1.65;color:var(--ink-2)">' +
       'TOYO non chiede l\'email a nessuno: è il motivo per cui ti bastano un nome utente e una password. ' +
